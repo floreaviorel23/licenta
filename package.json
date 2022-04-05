@@ -1,0 +1,29 @@
+{
+  "name": "licenta",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "devStart": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/floreaviorel23/licenta.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/floreaviorel23/licenta/issues"
+  },
+  "homepage": "https://github.com/floreaviorel23/licenta#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "express": "^4.17.2",
+    "pug": "^3.0.2",
+    "tedious": "^14.1.0"
+  }
+}
