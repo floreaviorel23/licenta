@@ -116,10 +116,23 @@ app.post("/login", urlencodedParser, async (req, res) => {
         try {
             //Tests if there is an user in database that has the username and pswd
             const user = await getUser(username, pswd);
-            req.session.userName = user[0][2].value; //only 1 row (hence user[0])
 
-            res.status(200);
-            res.redirect('/');
+            const dbPass = user[0][4].value;
+            const validPass = await bcrypt.compare(pswd, dbPass);
+
+            if(validPass){
+                req.session.userName = user[0][2].value; //only 1 row (hence user[0])
+
+                res.status(200);
+                res.redirect('/');
+            }
+            else{
+                console.log("Invalid pass");
+
+                res.status(400);
+                res.redirect('/login');
+            }
+
         }
         catch (err) {
             console.log(err);
@@ -153,12 +166,10 @@ app.post('/register', urlencodedParser, async (req, res) => {
 });
 
 // - - - - - Checks if the user (username & password) exists in the database - - - - - - -
-async function getUser(username, password) {
+async function getUser(username) {
     const prom = new Promise(async (resolve, reject) => {
 
-        const hashPassword = await bcrypt.hash(password, 10);
-
-        let sql = `exec CheckUser "${username}", "${hashPassword}"`;
+        let sql = `exec CheckUsername "${username}"`;
 
         let Request = require('tedious').Request;
         const dbrequest = new Request(sql, (err, rowCount) => {
@@ -188,6 +199,10 @@ async function registerNewUser(username, email, pswd) {
     const prom = new Promise(async(resolve, reject) => {
 
         const hashPassword = await bcrypt.hash(pswd, 10);
+
+        console.log("Pass is : " + pswd + "\nlength is : " + pswd.length);
+        console.log("Hashed pass is : ", hashPassword);
+
         let sql = `exec AddNewUser_licenta "${username}", "${email}", "${hashPassword}", NULL, NULL, "noob"`;
 
         let Request = require('tedious').Request;
