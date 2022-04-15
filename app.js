@@ -6,6 +6,7 @@ const path = require('path');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const cors = require('cors');
 const session = require('express-session');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 app.use(cors());
@@ -46,8 +47,8 @@ let config = {
         }
     }
 };
-// let connection = new Connection(config);
-// module.exports.connection = connection;
+let connection = new Connection(config);
+module.exports.connection = connection;
 
 // - - - - - - - - - - Database connection - - - - - - - - -
 function dbConnection() {
@@ -60,7 +61,7 @@ function dbConnection() {
         }
     });
 }
-// dbConnection();
+dbConnection();
 
 
 // - - - - - - - - - - Express routes - - - - - - - - -
@@ -152,10 +153,12 @@ app.post('/register', urlencodedParser, async (req, res) => {
 });
 
 // - - - - - Checks if the user (username & password) exists in the database - - - - - - -
-function getUser(username, password) {
-    const prom = new Promise((resolve, reject) => {
+async function getUser(username, password) {
+    const prom = new Promise(async (resolve, reject) => {
 
-        let sql = `exec SelectUser "${username}", "${password}"`;
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        let sql = `exec CheckUser "${username}", "${hashPassword}"`;
 
         let Request = require('tedious').Request;
         const dbrequest = new Request(sql, (err, rowCount) => {
@@ -181,10 +184,11 @@ function getUser(username, password) {
 }
 
 // - - - - - - - - - - Add a new user to database - - - - - - - - - - - 
-function registerNewUser(username, email, pswd) {
-    const prom = new Promise((resolve, reject) => {
+async function registerNewUser(username, email, pswd) {
+    const prom = new Promise(async(resolve, reject) => {
 
-        let sql = `exec AddNewUser "${username}", "${email}", "${pswd}"`;
+        const hashPassword = await bcrypt.hash(pswd, 10);
+        let sql = `exec AddNewUser_licenta "${username}", "${email}", "${hashPassword}", NULL, NULL, "noob"`;
 
         let Request = require('tedious').Request;
         const dbrequest = new Request(sql, (err, rowCount) => {
