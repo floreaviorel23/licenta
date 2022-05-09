@@ -1,4 +1,4 @@
-console.log("dada esti in index.js");
+console.log("dada esti in index.js :D");
 
 const animeCards = document.querySelectorAll(".card-img-top");
 const animeButton = document.querySelectorAll(".anime-button");

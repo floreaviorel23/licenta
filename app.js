@@ -60,6 +60,14 @@ function dbConnection() {
             console.log("Connected to db : " + config.options.database);
         }
     });
+    connection.on('error', (err)=>{
+        if(err){
+            console.log('[ERROR]Error here: ' + err);
+        }
+    });
+    connection.on('end', ()=>{
+        console.log('[DEBUG]Something triggered the end of the connection');
+    });
 }
 dbConnection();
 
