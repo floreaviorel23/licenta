@@ -1,0 +1,84 @@
+include ./include/mixinAnimeCard.pug
+
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet" href="./css/bootstrap.min.css")
+        link(rel="stylesheet" href="./css/index.css")
+        link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css')
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js')
+        script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js')
+        link(rel="shortcut icon" href="#")
+        title Main Page
+    body 
+        // - - - - - - - - - - Navbar - - - - - - - - - - - - - - -
+        nav.navbar.navbar-expand-md.bg-dark.navbar-dark.py-3
+            .container
+                a.navbar-brand(href='#') Anime Manga Website
+                button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navmenu')
+                    span.navbar-toggler-icon
+                #navmenu.collapse.navbar-collapse
+                    ul.navbar-nav.ms-auto
+                        li.nav-item
+                        a.nav-link(href='#username') Username
+                        li.nav-item
+                        a.nav-link(href='#profile') Profile
+                        li.nav-item
+                        a.nav-link(href='#logout') Logout
+
+
+        // - - - - - - - - - - Anime Cards - - - - - - - - - - - - - - -
+        - const anime = {};
+        - anime.imgPath = './images/Naruto.jpg';
+        - anime.title = 'Naruto';
+        - anime.genres = ['Action', 'Adventure', 'Fantasy'];
+
+        .container.carousel-container
+            h2 Top Animes
+            #myAnimeCarousel.carousel.slide(data-interval='false')
+                // Indicators
+                ol.carousel-indicators
+                    li.active(data-target='#myAnimeCarousel' data-slide-to='0')
+                    li(data-target='#myAnimeCarousel' data-slide-to='1')
+                    li(data-target='#myAnimeCarousel' data-slide-to='2')
+                // Wrapper for slides
+                .carousel-inner
+                    .item.active
+                        .container
+                            .d-flex.cards-container
+                                +mixinAnimeCard(anime)
+                                +mixinAnimeCard(anime)
+                                +mixinAnimeCard(anime)
+                                +mixinAnimeCard(anime)
+                    .item
+                        .container
+                            .d-flex.cards-container
+                                +mixinAnimeCard(anime)
+                                +mixinAnimeCard(anime)
+                                +mixinAnimeCard(anime)
+                                +mixinAnimeCard(anime)
+                    .item
+                        .container
+                            .d-flex.cards-container
+                                +mixinAnimeCard(anime)
+                                +mixinAnimeCard(anime)
+                                +mixinAnimeCard(anime)
+                                +mixinAnimeCard(anime)
+                // Left and right controls
+                a.left.carousel-control(href='#myAnimeCarousel' data-slide='prev')
+                    span.glyphicon.glyphicon-chevron-left
+                    span.sr-only Previous
+                a.right.carousel-control(href='#myAnimeCarousel' data-slide='next')
+                    span.glyphicon.glyphicon-chevron-right
+                    span.sr-only Next
+
+
+
+        script(src='js/bootstrap.min.js')
+        script(src="js/index.js")
+
+
+

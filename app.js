@@ -72,13 +72,13 @@ app.listen(PORT, () => {
 app.get("/", async (req, res) => {
     console.log("GET Request from /");
     try {
-        if (!req.session.userName) {
+        if (!req.session.userName && 0) {
             res.status(200);
             res.redirect('/login');
         }
         else {
             res.status(200);
-            res.send("You are logged in :D");
+            res.render('index');
         }
     }
     catch (err) {
