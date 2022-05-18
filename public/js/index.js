@@ -14,3 +14,9 @@ animeCards.forEach((card, index) => {
     animeButton[index].style.display = "none";
     });
 });
+
+animeCards.forEach((card, index) => {
+    card.addEventListener("click", function (event) {
+    console.log("click card : " + index);
+    });
+});
