@@ -69,7 +69,7 @@ function dbConnection() {
         console.log('[DEBUG]Something triggered the end of the connection');
     });
 }
-dbConnection();
+//dbConnection();
 
 
 // - - - - - - - - - - Express routes - - - - - - - - -
