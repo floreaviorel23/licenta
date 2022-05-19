@@ -10,7 +10,9 @@
 
 
 .search-bar{
-    width: 100%
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden
 }
 
 
@@ -26,14 +28,20 @@
 }
 
 .anime-card {
-    padding: 2px;
     width: 150px;
     overflow: hidden;
     text-align: center;
     box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18);
     border: none;
-    border-radius: 10px;
-    
+    border-radius: 5px;
+}
+
+.recently-added .anime-card{
+    width: 100px;
+}
+
+.recently-added .anime-button{
+    right: 30%;
 }
 
 .left-button, .right-button{
@@ -66,7 +74,7 @@
 }
 
 .card-img-top {
-    border-radius: 15px;
+    border-radius: 5px;
     width: 100%;
 }
 
@@ -95,6 +103,23 @@
     justify-content: space-around;
 }
 
+.statistics{
+    width: 100%;
+    border: 1px solid black
+}
+
+.statistics th{
+    font-weight: 500;
+}
+
+.statistics .stats-title{
+    font-weight: bold;
+}
+
+.recent-reviews-div{
+    width: 100%;
+    border: 1px solid black;
+}
 
 .carousel-indicators {
     display: none;
