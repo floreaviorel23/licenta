@@ -20,7 +20,7 @@ app.use(session({
 }));
 
 // - - - - - - - - - - View Engine Setup- - - - - - - - -
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'pug');
 
 // - - - - - - - - - - Set public path - - - - - - - - -
@@ -117,8 +117,22 @@ app.get("/logout", (req, res) => {
     }
 });
 
+app.get("/anime", async (req, res) => {
+    console.log("GET Request from /anime");
+
+    try {
+        res.status(200);
+        res.render("animeSearchPage");
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
 app.get("/anime/:uuid", async (req, res) => {
-    console.log("GET Request from anime/uuid");
+    console.log("GET Request from /anime/uuid");
     const uuid = req.params.uuid;
 
     try {
@@ -133,6 +147,7 @@ app.get("/anime/:uuid", async (req, res) => {
     }
 });
 
+
 app.get("/manga/:uuid", async (req, res) => {
     console.log("GET Request from anime/uuid");
     const uuid = req.params.uuid;
@@ -141,6 +156,22 @@ app.get("/manga/:uuid", async (req, res) => {
         console.log("manga : " + uuid);
         res.status(200);
         res.render("mangaPage", {mangaName : uuid});
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/search/:uuid", async (req, res) => {
+    console.log("GET Request from anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("anime : " + uuid);
+        res.status(200);
+        res.render("animePage", {animeName : uuid});
     }
     catch (err) {
         console.log(err);

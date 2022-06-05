@@ -1,0 +1,21 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.input-group, .form-control, .input-group > button{
+    border: hidden;
+}
+
+.anime-search-bar{
+    width: 100%;
+    height: 60px;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid black;
+}
+
+a{
+    text-decoration: none;
+}

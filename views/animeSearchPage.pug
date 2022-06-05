@@ -1,0 +1,104 @@
+include ./common/navbar.pug
+include ./common/head.pug
+include ./include/mixinAnimeCard.pug
+
+doctype html
+html(lang="en")
+    +head("Anime Search Page")
+    link(rel="stylesheet" href="./css/animeSearchPage.css")
+
+    body 
+        +navbar('dada')
+
+    .container.mt-5.p-5
+        .row
+            .col-1
+            .col-10
+                .input-group.anime-search-bar.ps-4
+                    input.form-control(type='text' placeholder="Search anime" aria-label="Search" aria-describedby='button-addon2')
+                    button.px-3(type="button" class="" aria-label="Close")
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="4em" height="1.5em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><path fill="currentColor" d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0a5.5 5.5 0 0 1 11 0z"/></svg>
+            .col-5
+        
+        - const anime = {};
+        - anime.imgPath = './images/Naruto.jpg';
+        - anime.title = 'Naruto';
+        - anime.genres = ['Action', 'Adventure', 'Fantasy'];
+        
+        .row.my-5.pt-3
+            .col-6 
+                .container-fluid 
+                    a(href="") 
+                        h4 Action
+                    .row.pt-3
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+
+            .col-6
+                .container-fluid 
+                    a(href="") 
+                        h4 Comedy
+                    .row.pt-3
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+
+        .row.my-5.pt-3
+            .col-6 
+                .container-fluid 
+                    a(href="") 
+                        h4 Slice of life
+                    .row.pt-3
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+
+            .col-6
+                .container-fluid 
+                    a(href="") 
+                        h4 Shounen
+                    .row.pt-3
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+
+        .row.my-5.pt-3
+            .col-6 
+                .container-fluid 
+                    a(href="") 
+                        h4 Adventure
+                    .row.pt-3
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+
+            .col-6
+                .container-fluid 
+                    a(href="") 
+                        h4 Drama
+                    .row.pt-3
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+                        .col-4
+                            +mixinAnimeCard(anime)
+
+
+    script(src="js/index.js")
