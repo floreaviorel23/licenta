@@ -1,12 +1,13 @@
 mixin mixinCharacterCard(character)
-    .card.mb-3(style='max-width: 500px;').bg-dark.text-white.rounded
-        .row.g-0
-            .col-md-4.pe-1
-                img.characterImg.img-fluid.rounded-start(src=`${character.imgPath}` alt='...')
-            .col-md-8.px-1
-                .card-body.pt-2.px-3
-                    h5.card-title #{character.name}
-                    p.card-text.mt-2
-                        | This Voice Actor
-                    p.card-text.mt-5
-                        small.text-muted Side character
+    .col-3
+        .card.mb-3(style='max-width: 500px;').bg-dark.text-white.rounded
+            .row.g-0
+                .col-md-4.pe-1
+                    img.characterImg.img-fluid.rounded-start(src=`${character.imgPath}` alt='...')
+                .col-md-8.px-1
+                    .card-body.pt-2.px-3
+                        h5.card-title #{character.name}
+                        p.card-text.mt-2
+                            | This Voice Actor
+                        p.card-text.mt-5
+                            small.text-muted Side character

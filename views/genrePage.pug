@@ -1,0 +1,35 @@
+include ./common/navbar.pug
+include ./common/head.pug
+include ./include/mixinAnimeCard.pug
+include ./include/mixinGenreDiv.pug
+
+doctype html
+html(lang="en")
+    +head("Anime List Page")
+    link(rel="stylesheet" href="./css/genrePage.css")
+
+    body
+        - let navUserName = 'dada';
+        +navbar(navUserName)
+
+        - genre = genre.charAt(0).toUpperCase() + genre.slice(1)
+        .container.mt-3.p-5
+            .row
+                .col-12.title
+                    h1 #{genre} #{type}
+            
+            - const anime = {};
+            - anime.imgPath = './images/Naruto.jpg';
+            - anime.title = 'Naruto';
+            - anime.genres = ['Action', 'Adventure', 'Fantasy'];
+
+            .row
+                +mixinGenreDiv(anime)
+                +mixinGenreDiv(anime)
+                +mixinGenreDiv(anime)
+                +mixinGenreDiv(anime)
+                +mixinGenreDiv(anime)
+                +mixinGenreDiv(anime)
+                +mixinGenreDiv(anime)
+                +mixinGenreDiv(anime)
+                +mixinGenreDiv(anime)

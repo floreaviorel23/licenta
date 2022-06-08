@@ -1,0 +1,66 @@
+include ./common/navbar.pug
+include ./common/head.pug
+
+include ./include/mixinWatchlistEntry.pug
+
+doctype html
+html(lang="en")
+    +head("Anime List Page")
+    link(rel="stylesheet" href="./css/animeListPage.css")
+    body 
+        - let navUserName = 'dada';
+        +navbar(navUserName)
+
+        // Jumbotron
+        .container-fluid.mt-5
+            .row 
+                .col-2 
+
+                .col-8
+                    .bg-image.p-5.mb-5.jumboimg
+                        h1.mb-3 #{userName}'s Anime Watchlist
+                .col-2
+        // Jumbotron
+
+        - let entry = {};
+        - entry.number = 1;
+        - entry.imgSrc = './images/Naruto.jpg';
+        - entry.anime = 'Naruto';
+        - entry.status = 'Completed';
+        - entry.personalRating = 8;
+        - entry.averageRating = 6.22;
+        - entry.addedAt = '22/05/2019';
+
+        .container.p-5.entries-container.bg-light.rounded
+            .row.mb-5(style=`background-color: ${bgColor}`).rounded
+                .col-1.d-flex.align-items-center
+                    p(style="font-weight: bold") Entry no.
+
+                .col-2.d-flex.align-items-center
+                    
+                .col-4.d-flex.align-items-center 
+                    p(style="font-weight: bold") Anime 
+                    
+                .col-1.d-flex.align-items-center
+                    p(style="font-weight: bold") Status
+
+                .col-1.d-flex.align-items-center.justify-content-center
+                    p(style="font-weight: bold") Your rating
+
+                .col-1.d-flex.align-items-center.justify-content-center
+                    p(style="font-weight: bold") Average
+                    
+                .col-1.d-flex.align-items-center.justify-content-center
+                    p(style="font-weight: bold") Added at
+                
+                .col-1
+            +mixinWatchlistEntry(entry)
+            +mixinWatchlistEntry(entry)
+            +mixinWatchlistEntry(entry)
+            - entry.status = 'Incompleted';
+            +mixinWatchlistEntry(entry)
+            +mixinWatchlistEntry(entry)
+            +mixinWatchlistEntry(entry)
+            +mixinWatchlistEntry(entry)
+
+                

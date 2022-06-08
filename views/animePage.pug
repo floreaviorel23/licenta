@@ -5,10 +5,11 @@ include ./include/mixinComment.pug
 
 doctype html
 html(lang="en")
-    +head("Anime Page :D")
+    +head("Anime Page")
     link(rel="stylesheet" href="./css/animePage.css")
     body 
-        +navbar('dada')
+        - let navUserName = 'dada da';
+        +navbar(navUserName)
         // h5 Anime is : #{animeName}
 
         .container.mt-5
@@ -33,12 +34,12 @@ html(lang="en")
                     .animeContent.px-5
                         .container-fluid 
                             .row.bg-dark.text-white.pt-3.px-3.rounded.mb-5
-                                .col-3          
-                                    .animeTitle.mb-1
-                                        .display-6 Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint, a.
-                                    .authorDiv.mb-4 
+                                .col-12          
+                                    .animeTitle.mb-2
+                                        h2 #{animeName}
+                                    .authorDiv
                                         p Author : asds
-                                .col-9.mt-4
+                                .col-12.mt-4.pb-5.px-2
                                     .personalRatingDiv.float-end.mx-3
                                         span.averageRatingDiv.bg-info.p-3.text-white Personal Rating
                                         span.averageRatingValueDiv.bg-white.text-dark.p-3 10
@@ -46,6 +47,7 @@ html(lang="en")
                                     .ratingDiv.float-end.mx-3
                                         span.averageRatingDiv.bg-primary.p-3.text-white Average Rating
                                         span.averageRatingValueDiv.bg-white.text-dark.p-3 8.03
+                                    
 
                             .row.mt-4
                                 .descriptionDiv.mb-5
@@ -64,31 +66,31 @@ html(lang="en")
                     .charactersDiv.container.mt-3
                         h4 List of characters
                         .row.pt-2
-                            .col-3
-                                - const character = {};
-                                - character.name = "ASD";
-                                - character.imgPath = './images/characters/naruto/asd.jpg';
-                                +mixinCharacterCard(character)
-                            .col-3 
-                                - character.imgPath = './images/characters/naruto/asd (6).png';
-                                +mixinCharacterCard(character)
-                            .col-3 
-                                +mixinCharacterCard(character)
-                            .col-3 
-                                +mixinCharacterCard(character)
-                        .row
-                            .col-3 
-                                +mixinCharacterCard(character)
-                            .col-3 
-                                +mixinCharacterCard(character)
-                            .col-3 
-                                +mixinCharacterCard(character)
-                            .col-3 
-                                +mixinCharacterCard(character)
+            
+                            - const character = {};
+                            - character.name = "ASD";
+                            - character.imgPath = './images/characters/naruto/asd.jpg';
+                            +mixinCharacterCard(character)
+                        
+                            - character.imgPath = './images/characters/naruto/asd (6).png';
+                            +mixinCharacterCard(character)
+                        
+                            +mixinCharacterCard(character)
+                            
+                            +mixinCharacterCard(character)
+                    
+                            
+                            +mixinCharacterCard(character)
+                        
+                            +mixinCharacterCard(character)
+
+                            +mixinCharacterCard(character)
+                        
+                            +mixinCharacterCard(character)
                 .row
                     .col-12
                         .container-fluid
-                            button.col-2.rounded.btn.btn-primary(type='button') See All Characters
+                            button.col-2.rounded.btn.btn-primary(type='button' onclick=`location.href = '/${type}/characters/${animeName}';`) See All Characters
 
 
 

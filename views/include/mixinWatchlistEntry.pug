@@ -1,0 +1,28 @@
+mixin mixinWatchlistEntry(entry)
+
+    - let bgColor;
+    - if(entry.status === 'Completed') bgColor = 'lightgreen'
+
+    .row.mb-4(style=`background-color: ${bgColor}`).rounded
+        .col-1.d-flex.align-items-center
+            p(style="font-weight: bold") #{entry.number}.
+
+        .col-2.d-flex.align-items-center
+            img.img-watchlist(src=`${entry.imgSrc}` alt='Card image')
+
+        .col-4.d-flex.align-items-center 
+            p(style="font-weight: bold") #{entry.anime}
+
+        .col-1.d-flex.align-items-center
+            p #{entry.status}
+
+        .col-1.d-flex.align-items-center.justify-content-center
+            p #{entry.personalRating}
+
+        .col-1.d-flex.align-items-center.justify-content-center
+            p #{entry.averageRating}
+            
+        .col-1.d-flex.align-items-center.justify-content-center
+            p #{entry.addedAt}
+        
+        .col-1

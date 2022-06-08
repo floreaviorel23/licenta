@@ -60,12 +60,12 @@ function dbConnection() {
             console.log("Connected to db : " + config.options.database);
         }
     });
-    connection.on('error', (err)=>{
-        if(err){
+    connection.on('error', (err) => {
+        if (err) {
             console.log('[ERROR]Error here: ' + err);
         }
     });
-    connection.on('end', ()=>{
+    connection.on('end', () => {
         console.log('[DEBUG]Something triggered the end of the connection');
     });
 }
@@ -119,10 +119,26 @@ app.get("/logout", (req, res) => {
 
 app.get("/anime", async (req, res) => {
     console.log("GET Request from /anime");
-
+    const toSend = {};
+    toSend.type = 'Anime';
     try {
         res.status(200);
-        res.render("animeSearchPage");
+        res.render("animeSearchPage", toSend);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/manga", async (req, res) => {
+    console.log("GET Request from /anime");
+    const toSend = {};
+    toSend.type = 'Manga';
+    try {
+        res.status(200);
+        res.render("animeSearchPage", toSend);
     }
     catch (err) {
         console.log(err);
@@ -138,7 +154,7 @@ app.get("/anime/:uuid", async (req, res) => {
     try {
         console.log("anime : " + uuid);
         res.status(200);
-        res.render("animePage", {animeName : uuid});
+        res.render("animePage", { animeName: uuid, type: 'anime' });
     }
     catch (err) {
         console.log(err);
@@ -155,7 +171,7 @@ app.get("/manga/:uuid", async (req, res) => {
     try {
         console.log("manga : " + uuid);
         res.status(200);
-        res.render("mangaPage", {mangaName : uuid});
+        res.render("mangaPage", { mangaName: uuid });
     }
     catch (err) {
         console.log(err);
@@ -164,14 +180,94 @@ app.get("/manga/:uuid", async (req, res) => {
     }
 });
 
-app.get("/search/:uuid", async (req, res) => {
+app.get("/anime/watchlist/:uuid", async (req, res) => {
     console.log("GET Request from anime/uuid");
     const uuid = req.params.uuid;
 
     try {
-        console.log("anime : " + uuid);
+        console.log("username : " + uuid);
         res.status(200);
-        res.render("animePage", {animeName : uuid});
+        res.render("animeListPage", { userName : uuid });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/profile/:uuid", async (req, res) => {
+    console.log("GET Request from anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("username : " + uuid);
+        res.status(200);
+        res.render("profilePage", {userName : uuid });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/anime/genre/:uuid", async (req, res) => {
+    console.log("GET Request from /anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("Genre : " + uuid);
+        res.status(200);
+        res.render("genrePage", { genre: uuid, type: 'Anime' });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/manga/genre/:uuid", async (req, res) => {
+    console.log("GET Request from /anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("Genre : " + uuid);
+        res.status(200);
+        res.render("genrePage", { genre: uuid, type: 'Manga'});
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/anime/characters/:uuid", async (req, res) => {
+    console.log("GET Request from /anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("Genre : " + uuid);
+        res.status(200);
+        res.render("charactersPage", { name: uuid, type: 'Anime' });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/manga/characters/:uuid", async (req, res) => {
+    console.log("GET Request from /anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("Genre : " + uuid);
+        res.status(200);
+        res.render("charactersPage", { name: uuid, type: 'Manga'});
     }
     catch (err) {
         console.log(err);
@@ -191,13 +287,13 @@ app.post("/login", urlencodedParser, async (req, res) => {
             const dbPass = user[0][4].value;
             const validPass = await bcrypt.compare(pswd, dbPass);
 
-            if(validPass){
+            if (validPass) {
                 req.session.userName = user[0][2].value; //only 1 row (hence user[0])
 
                 res.status(200);
                 res.redirect('/');
             }
-            else{
+            else {
                 console.log("Invalid pass");
 
                 res.status(400);
@@ -267,7 +363,7 @@ async function getUser(username) {
 
 // - - - - - - - - - - Add a new user to database - - - - - - - - - - - 
 async function registerNewUser(username, email, pswd) {
-    const prom = new Promise(async(resolve, reject) => {
+    const prom = new Promise(async (resolve, reject) => {
 
         const hashPassword = await bcrypt.hash(pswd, 10);
 

@@ -1,0 +1,30 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+.jumboimg {
+    background-image: url('../images/anime-wallpaper.jpg');
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+    background-repeat: no-repeat;
+    min-height: 330px;
+
+    display: flex;
+    justify-content: center;
+}
+
+.jumboimg>h1 {
+    font-weight: bolder;
+}
+
+.img-watchlist {
+    height: 120px;
+}
+
+.entries-container .row {
+    background-color: blac
+}
