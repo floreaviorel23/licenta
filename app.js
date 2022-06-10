@@ -69,7 +69,7 @@ function dbConnection() {
         console.log('[DEBUG]Something triggered the end of the connection');
     });
 }
-//dbConnection();
+dbConnection();
 
 
 // - - - - - - - - - - Express routes - - - - - - - - -
@@ -212,6 +212,84 @@ app.get("/profile/:uuid", async (req, res) => {
     }
 });
 
+app.get("/admin", async (req, res) => {
+    console.log("GET Request from admin");
+
+    try {
+        res.status(200);
+        res.render("adminPage");
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/admin/action/select/:uuid", async (req, res) => {
+    console.log("GET Request from anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("type : " + uuid);
+        res.status(200);
+        res.render("adminActionPage", {type : uuid, action: 'Select' });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/admin/action/add/:uuid", async (req, res) => {
+    console.log("GET Request from anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("type : " + uuid);
+        res.status(200);
+        res.render("adminActionPage", {type : uuid, action: 'Add' });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/admin/action/edit/:uuid", async (req, res) => {
+    console.log("GET Request from anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("type : " + uuid);
+        res.status(200);
+        res.render("adminActionPage", {type : uuid, action: 'Edit' });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.get("/admin/action/delete/:uuid", async (req, res) => {
+    console.log("GET Request from anime/uuid");
+    const uuid = req.params.uuid;
+
+    try {
+        console.log("type : " + uuid);
+        res.status(200);
+        res.render("adminActionPage", {type : uuid, action: 'Delete' });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
 app.get("/anime/genre/:uuid", async (req, res) => {
     console.log("GET Request from /anime/uuid");
     const uuid = req.params.uuid;
@@ -289,6 +367,7 @@ app.post("/login", urlencodedParser, async (req, res) => {
 
             if (validPass) {
                 req.session.userName = user[0][2].value; //only 1 row (hence user[0])
+                console.log('User logged : ',req.session.userName);
 
                 res.status(200);
                 res.redirect('/');

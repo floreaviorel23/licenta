@@ -1,0 +1,33 @@
+include ./common/navbar.pug
+include ./common/head.pug
+
+include ./include/mixinAnimeCard.pug
+include ./include/mixinGenreDiv.pug
+include ./include/mixinAdmin.pug
+
+doctype html
+html(lang="en")
+    +head("Admin Page")
+    link(rel="stylesheet" href="./css/adminPage.css")
+    
+    body
+        - let navUserName = 'dada da';
+        +navbar(navUserName)
+
+        .container.mt-3.py-3
+            .row
+                h1 Admin Panel
+
+
+        .container
+            .row.g-5
+                +mixinAdmin('User')
+                +mixinAdmin('Person')
+                +mixinAdmin('Author')
+                +mixinAdmin('Voice Actor')
+                
+                +mixinAdmin('Anime Character')
+                +mixinAdmin('Manga Character')
+
+                +mixinAdmin('Anime')
+                +mixinAdmin('Manga')

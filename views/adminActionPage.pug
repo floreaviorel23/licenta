@@ -1,0 +1,48 @@
+include ./common/navbar.pug
+include ./common/head.pug
+
+doctype html
+html(lang="en")
+    +head("Admin Action Page")
+    link(rel="stylesheet" href="./css/adminActionPage.css")
+
+    body
+        - let navUserName = 'dada da';
+        +navbar(navUserName)
+
+        .container.m-5.pt-3.px-5
+            h1.text-center #{action} #{type}
+            .row 
+                .col-3
+
+                .col-6
+                    .container.m-5.pt-3.px-5
+                        -if(action == 'Add' || action == 'Edit')
+                            div
+                                form
+                                    .mb-3
+                                        label.form-label(for='exampleInputEmail1') Field 1
+                                        input#exampleInputEmail1.form-control(type='email' aria-describedby='emailHelp')
+                                        #emailHelp.form-text
+                                    .mb-3
+                                        label.form-label(for='exampleInputPassword1') Field 2
+                                        input#exampleInputPassword1.form-control(type='password')
+                                    .mb-3
+                                        label.form-label(for='exampleInputPassword1') Field 3
+                                        input#exampleInputPassword1.form-control(type='password')
+                                    .mb-3
+                                        label.form-label(for='exampleInputPassword1') Field 4
+                                        input#exampleInputPassword1.form-control(type='password')
+                                    button.btn.btn-primary(type='submit') Submit
+
+                        -if(action == 'Select' || action == 'Delete')
+                            div
+                                form
+                                    .mb-3
+                                        label.form-label(for='exampleInputEmail1') Field 1
+                                        input#exampleInputEmail1.form-control(type='email' aria-describedby='emailHelp')
+                                        #emailHelp.form-text
+                                    .mb-3
+                                    button.btn.btn-primary(type='submit') Submit
+
+                .col-3

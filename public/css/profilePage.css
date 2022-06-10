@@ -1,0 +1,15 @@
+body{
+    margin-bottom: 100px;
+}
+
+.pfp{
+    height: 210px;
+}
+
+.editDiv{
+    font-size: 20px;
+}
+
+.btn-edit{
+    width: 80%;
+}

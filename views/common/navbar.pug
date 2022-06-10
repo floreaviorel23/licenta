@@ -9,10 +9,10 @@ mixin navbar(userName)
             #navmenu.collapse.navbar-collapse
                 ul.navbar-nav.ms-auto
                     li.nav-item
-                    a.nav-link(href='#username') 
+                    a.nav-link(href=`/profile/dada da`) 
                         h5 #{userName}
                     li.nav-item
-                    a.nav-link(href='#profile')
+                    a.nav-link(href=`/profile/dada da`)
                         div
                             img.profile-img.rounded-circle(src='images/hmm.jpg')
                     li.nav-item
@@ -35,6 +35,8 @@ mixin navbar(userName)
                                 a.nav-link(href='/manga') Manga
                                 li.nav-item
                                 a.nav-link(href='#help') Help
+                                li.nav-item
+                                a.nav-link(href='/admin') Admin
                         .col-5
                         //- empty space for alignment
 

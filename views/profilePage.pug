@@ -1,10 +1,83 @@
 include ./common/navbar.pug
 include ./common/head.pug
+include ./include/statistics.pug
+include ./include/mixinAnimeCard.pug
+include ./include/mixinGenreDiv.pug
 
 doctype html
 html(lang="en")
-    +head("Characters Page")
+    +head("Profile Page")
+    link(rel="stylesheet" href="./css/profilePage.css")
     
     body
         - let navUserName = 'dada da';
         +navbar(navUserName)
+
+        .container.mt-5.py-3
+            .row
+                .col-3
+                    .div.d-flex.justify-content-center
+                        img.pfp(src='images/hmm.jpg')
+                
+                .col-3.d-flex.align-content-center
+                    .container-fluid
+                        .row 
+                            h1 #{userName}
+                        .row
+                            h6 Joined 28 May 2022
+                        .row.mt-3
+                            button.btn.btn-primary.btn-edit.rounded.editDiv(type="button" class="" aria-label="Edit") Edit Profile 
+                                svg.ms-3(xmlns='http://www.w3.org/2000/svg' aria-hidden='true' role='img' width='1em' height='1em' preserveaspectratio='xMidYMid meet' viewbox='0 0 36 36')
+                                    path.clr-i-outline.clr-i-outline-path-1(fill='currentColor' d='M33.87 8.32L28 2.42a2.07 2.07 0 0 0-2.92 0L4.27 23.2l-1.9 8.2a2.06 2.06 0 0 0 2 2.5a2.14 2.14 0 0 0 .43 0l8.29-1.9l20.78-20.76a2.07 2.07 0 0 0 0-2.92ZM12.09 30.2l-7.77 1.63l1.77-7.62L21.66 8.7l6 6ZM29 13.25l-6-6l3.48-3.46l5.9 6Z')
+                                    path(fill='none' d='M0 0h36v36H0z')
+                        .row.mt-3
+                            button.btn.btn-info.btn-edit.rounded.editDiv(type="button" class="" aria-label="Edit") Add Friend
+                                svg.ms-3.icon.icon-tabler.icon-tabler-friends(xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewbox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round')
+                                    path(stroke='none' d='M0 0h24v24H0z' fill='none')
+                                    circle(cx='7' cy='5' r='2')
+                                    path(d='M5 22v-5l-1 -1v-4a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4l-1 1v5')
+                                    circle(cx='17' cy='5' r='2')
+                                    path(d='M15 22v-4h-2l2 -6a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1l2 6h-2v4')
+
+                .col-1
+                .col-4
+                    +statistics()
+            .row.mt-5.p-3
+                .bio.mt-2.mb-5
+                    h2.mb-3 About me 
+                    p Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque deserunt, tenetur maiores nulla tempore debitis corrupti eveniet illum laboriosam porro aperiam, corporis quae, fugiat fuga suscipit? Atque mollitia vel, sequi modi excepturi quisquam sint, soluta repellendus quaerat quidem placeat? Officiis cumque rerum accusantium minus, quod modi velit molestiae dignissimos quasi ipsam, illo similique amet consequatur nisi repellendus soluta harum quia.
+
+            .row.px-3
+                h2 Favorite anime and manga
+                .container-fluid.px-3
+                    .row
+                        .col-12.title
+                            h1 #{genre} #{type}
+                    
+                    - const anime = {};
+                    - anime.imgPath = './images/Naruto.jpg';
+                    - anime.title = 'Naruto';
+                    - anime.genres = ['Action', 'Adventure', 'Fantasy'];
+
+                    .row
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
+
+            .row.px-3.mt-5
+                h2 Your friends favorite shows
+                .container-fluid.px-3
+                    .row
+                        .col-12.title
+                            h1 #{genre} #{type}
+
+                    .row
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
+                        +mixinGenreDiv(anime)
