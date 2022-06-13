@@ -165,7 +165,7 @@ app.get("/anime/:uuid", async (req, res) => {
 
 
 app.get("/manga/:uuid", async (req, res) => {
-    console.log("GET Request from anime/uuid");
+    console.log("GET Request from manga/uuid");
     const uuid = req.params.uuid;
 
     try {
@@ -181,13 +181,13 @@ app.get("/manga/:uuid", async (req, res) => {
 });
 
 app.get("/anime/watchlist/:uuid", async (req, res) => {
-    console.log("GET Request from anime/uuid");
+    console.log("GET Request from anime/watchlist/uuid");
     const uuid = req.params.uuid;
 
     try {
         console.log("username : " + uuid);
         res.status(200);
-        res.render("animeListPage", { userName : uuid });
+        res.render("animeListPage", { userName: uuid });
     }
     catch (err) {
         console.log(err);
@@ -197,13 +197,13 @@ app.get("/anime/watchlist/:uuid", async (req, res) => {
 });
 
 app.get("/profile/:uuid", async (req, res) => {
-    console.log("GET Request from anime/uuid");
+    console.log("GET Request from profile/uuid");
     const uuid = req.params.uuid;
 
     try {
         console.log("username : " + uuid);
         res.status(200);
-        res.render("profilePage", {userName : uuid });
+        res.render("profilePage", { userName: uuid });
     }
     catch (err) {
         console.log(err);
@@ -227,13 +227,13 @@ app.get("/admin", async (req, res) => {
 });
 
 app.get("/admin/action/select/:uuid", async (req, res) => {
-    console.log("GET Request from anime/uuid");
+    console.log("GET Request from admin/action/select/uuid");
     const uuid = req.params.uuid;
 
     try {
         console.log("type : " + uuid);
         res.status(200);
-        res.render("adminActionPage", {type : uuid, action: 'Select' });
+        res.render("adminActionPage", { type: uuid, action: 'Select' });
     }
     catch (err) {
         console.log(err);
@@ -243,13 +243,13 @@ app.get("/admin/action/select/:uuid", async (req, res) => {
 });
 
 app.get("/admin/action/add/:uuid", async (req, res) => {
-    console.log("GET Request from anime/uuid");
+    console.log("GET Request from admin/action/add/uuid");
     const uuid = req.params.uuid;
 
     try {
         console.log("type : " + uuid);
         res.status(200);
-        res.render("adminActionPage", {type : uuid, action: 'Add' });
+        res.render("adminActionPage", { type: uuid, action: 'Add' });
     }
     catch (err) {
         console.log(err);
@@ -259,13 +259,13 @@ app.get("/admin/action/add/:uuid", async (req, res) => {
 });
 
 app.get("/admin/action/edit/:uuid", async (req, res) => {
-    console.log("GET Request from anime/uuid");
+    console.log("GET Request admin/action/edit/uuid");
     const uuid = req.params.uuid;
 
     try {
         console.log("type : " + uuid);
         res.status(200);
-        res.render("adminActionPage", {type : uuid, action: 'Edit' });
+        res.render("adminActionPage", { type: uuid, action: 'Edit' });
     }
     catch (err) {
         console.log(err);
@@ -275,13 +275,13 @@ app.get("/admin/action/edit/:uuid", async (req, res) => {
 });
 
 app.get("/admin/action/delete/:uuid", async (req, res) => {
-    console.log("GET Request from anime/uuid");
+    console.log("GET Request from admin/action/delete/uuid");
     const uuid = req.params.uuid;
 
     try {
         console.log("type : " + uuid);
         res.status(200);
-        res.render("adminActionPage", {type : uuid, action: 'Delete' });
+        res.render("adminActionPage", { type: uuid, action: 'Delete' });
     }
     catch (err) {
         console.log(err);
@@ -290,8 +290,32 @@ app.get("/admin/action/delete/:uuid", async (req, res) => {
     }
 });
 
+app.post("/admin/action/add/:uuid", urlencodedParser, async (req, res) => {
+    console.log("POST request from /admin/action/add/:uuid");
+    const uuid = req.params.uuid;
+
+    if (uuid == 'User') {
+        const [username, email, pswd, avatar, dob, role] = [req.body.username, req.body.email, req.body.pswd, req.body.avatar, req.body.dob, req.body.role];
+        //console.log(`Username : ${username}, email : ${email}, pswd : ${pswd}, avatar : ${avatar}, dob : ${dob}, role : ${role}`);
+
+        if (username && pswd && email) {
+            try {
+                //If registerNewUser fails (because of database constraints), it will catch an error
+                await registerNewUserAdmin(username, email, pswd, avatar, dob, role);
+                res.status(200);
+                res.redirect('/admin');
+            }
+            catch (err) {
+                res.status(400);
+                res.send("Username or email already exists");
+            }
+        }
+    }
+
+});
+
 app.get("/anime/genre/:uuid", async (req, res) => {
-    console.log("GET Request from /anime/uuid");
+    console.log("GET Request from /anime/genre/uuid");
     const uuid = req.params.uuid;
 
     try {
@@ -307,13 +331,13 @@ app.get("/anime/genre/:uuid", async (req, res) => {
 });
 
 app.get("/manga/genre/:uuid", async (req, res) => {
-    console.log("GET Request from /anime/uuid");
+    console.log("GET Request from /manga/genre/uuid");
     const uuid = req.params.uuid;
 
     try {
         console.log("Genre : " + uuid);
         res.status(200);
-        res.render("genrePage", { genre: uuid, type: 'Manga'});
+        res.render("genrePage", { genre: uuid, type: 'Manga' });
     }
     catch (err) {
         console.log(err);
@@ -323,7 +347,7 @@ app.get("/manga/genre/:uuid", async (req, res) => {
 });
 
 app.get("/anime/characters/:uuid", async (req, res) => {
-    console.log("GET Request from /anime/uuid");
+    console.log("GET Request from /anime/characters/uuid");
     const uuid = req.params.uuid;
 
     try {
@@ -339,13 +363,13 @@ app.get("/anime/characters/:uuid", async (req, res) => {
 });
 
 app.get("/manga/characters/:uuid", async (req, res) => {
-    console.log("GET Request from /anime/uuid");
+    console.log("GET Request from /manga/characters/uuid");
     const uuid = req.params.uuid;
 
     try {
         console.log("Genre : " + uuid);
         res.status(200);
-        res.render("charactersPage", { name: uuid, type: 'Manga'});
+        res.render("charactersPage", { name: uuid, type: 'Manga' });
     }
     catch (err) {
         console.log(err);
@@ -367,7 +391,7 @@ app.post("/login", urlencodedParser, async (req, res) => {
 
             if (validPass) {
                 req.session.userName = user[0][2].value; //only 1 row (hence user[0])
-                console.log('User logged : ',req.session.userName);
+                console.log('User logged : ', req.session.userName);
 
                 res.status(200);
                 res.redirect('/');
@@ -467,6 +491,49 @@ async function registerNewUser(username, email, pswd) {
         });
 
         connection.execSql(dbrequest);
+    });
+    return prom;
+}
+
+
+// - - - - - - - - - - Add a new user in admin mode to database - - - - - - - - - - - 
+async function registerNewUserAdmin(username, email, pswd, avatar, dob, role) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const hashPassword = await bcrypt.hash(pswd, 10);
+
+        if (!avatar || avatar == '')
+            avatar = TYPES.Null;
+
+        if (!dob || dob == '')
+            dob = TYPES.Null;
+
+        if (!role || role == '')
+            role = TYPES.Null;
+
+
+        const dbrequest = new Request('AddNewUser_licenta', (err, rowCount) => {
+            if (err) {
+                reject("failed add new user admin");
+                console.log("err add admin : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+        dbrequest.addParameter('email', TYPES.NVarChar, email);
+        dbrequest.addParameter('pass', TYPES.NVarChar, hashPassword);
+        dbrequest.addParameter('avatar', TYPES.NVarChar, avatar);
+        dbrequest.addParameter('dob', TYPES.DateTime, dob);
+        dbrequest.addParameter('user_role', TYPES.NVarChar, role);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed add user admin");
+            resolve("success");
+        });
+
+        connection.callProcedure(dbrequest);
     });
     return prom;
 }
