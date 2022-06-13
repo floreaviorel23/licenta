@@ -7,7 +7,7 @@ include ./include/mixinSelectDeleteUser.pug
 doctype html
 html(lang="en")
     +head("Admin Action Page")
-    //link(rel="stylesheet" href="./css/adminActionPage.css")
+    link(rel="stylesheet" href="./css/adminActionPage.css")
 
     body
         - let navUserName = 'dada da';
@@ -16,16 +16,16 @@ html(lang="en")
         .container.mx-5.px-5.mt-4
             h1.text-center #{action} #{type}
 
-            -if(type == "User")
+            -if(type == "User" || type == "Person")
                 .row 
                     .col-3
 
                     .col-6
                         .container.mx-5.px-5.mt-2
                             -if(action == 'Select' || action == 'Delete')
-                                +mixinSelectDeleteUser(type)
+                                +mixinSelectDeleteUser(action, type, results)
 
                             -if(action == 'Add' || action == 'Edit')
-                                +mixinAddEditUser(type)
+                                +mixinAddEditUser(action, type)
 
                     .col-3

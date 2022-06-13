@@ -310,8 +310,105 @@ app.post("/admin/action/add/:uuid", urlencodedParser, async (req, res) => {
                 res.send("Username or email already exists");
             }
         }
+        else {
+            res.status(200);
+            res.redirect('/admin/action/add/User');
+        }
     }
+});
 
+app.post("/admin/action/edit/:uuid", urlencodedParser, async (req, res) => {
+    console.log("POST request from /admin/action/edit/:uuid");
+    const uuid = req.params.uuid;
+
+    if (uuid == 'User') {
+        const [username, pswd, role] = [req.body.username, req.body.pswd, req.body.role];
+        //console.log(`Username : ${username},pswd : ${pswd}, role : ${role}`);
+
+        if (username) {
+            if (pswd) {
+                try {
+                    //If updateUserPassword fails (because of database constraints), it will catch an error
+                    await updateUserPassword(username, pswd);
+                    res.status(200);
+                    res.redirect('/admin');
+                }
+                catch (err) {
+                    res.status(400);
+                    res.send("Couldn't update pass");
+                }
+            }
+            if (role) {
+                try {
+                    //If updateUserRole fails (because of database constraints), it will catch an error
+                    await updateUserRole(username, role);
+                    res.status(200);
+                    res.redirect('/admin');
+                }
+                catch (err) {
+                    res.status(400);
+                    res.send("Couldn't update role");
+                }
+            }
+        }
+        else {
+            res.status(200);
+            res.redirect('/admin/action/edit/User');
+        }
+    }
+});
+
+app.post("/admin/action/select/:uuid", urlencodedParser, async (req, res) => {
+    const uuid = req.params.uuid;
+    console.log(`POST request from /admin/action/select/${uuid}"`);
+
+    let results;
+
+    if (uuid == 'User') {
+        const [username] = [req.body.username];
+        //console.log(`Username : ${username}`);
+        if (username) {
+            try {
+                //If selectUserAdmin fails (because of database constraints), it will catch an error
+                results = await selectUserAdmin(username);
+                //console.log('User : ', user);
+            }
+            catch (err) {
+                res.status(400);
+                res.send("Error select user");
+            }
+        }
+    }
+    res.status(200);
+    res.render("adminActionPage", { type: uuid, action: 'Select', results: results });
+});
+
+app.post("/admin/action/delete/:uuid", urlencodedParser, async (req, res) => {
+    console.log("DELETE request from /admin/action/delete/:uuid");
+    const uuid = req.params.uuid;
+    let message;
+
+    if (uuid == 'User') {
+        const [username] = [req.body.username];
+        //console.log(`Username : ${username}`);
+
+        if (username) {
+            try {
+                //If deleteUserAdmin fails (because of database constraints), it will catch an error
+                message = await deleteUserAdmin(username);
+                console.log(message);
+                //console.log('User : ', user);
+            }
+            catch (err) {
+                res.status(400);
+                res.send("Error delete user");
+            }
+        }
+        res.status(200);
+        res.render("adminActionPage", {
+            type: uuid, action: 'Delete', results: message
+        });
+    }
 });
 
 app.get("/anime/genre/:uuid", async (req, res) => {
@@ -538,8 +635,138 @@ async function registerNewUserAdmin(username, email, pswd, avatar, dob, role) {
     return prom;
 }
 
+// - - - - - - - - - - Update an user password  - - - - - - - - - - - 
+async function updateUserPassword(username, pswd) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const hashPassword = await bcrypt.hash(pswd, 10);
+
+        const dbrequest = new Request('UpdatePassword', (err, rowCount) => {
+            if (err) {
+                reject("failed UpdatePassword");
+                console.log("err UpdatePassword : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+        dbrequest.addParameter('pass', TYPES.NVarChar, hashPassword);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed UpdatePassword");
+            resolve("success");
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Update an user role - - - - - - - - - - - 
+async function updateUserRole(username, role) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('UpdateUserRole', (err, rowCount) => {
+            if (err) {
+                reject("failed UpdateUserRole");
+                console.log("err UpdateUserRole : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+        dbrequest.addParameter('user_role', TYPES.NVarChar, role);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed UpdateUserRole");
+            resolve("success");
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select all info about an user - - - - - - - - - - - 
+async function selectUserAdmin(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('ReadUser', (err, rowCount) => {
+            if (err) {
+                reject("failed select user admin");
+                console.log("err select admin : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let user = {};
+        dbrequest.on('row', (columns) => {
+            let [id, uuid, username, email, pass, avatar, dob, role, createdAt] =
+                [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value, columns[6].value, columns[7].value, columns[8].value];
+            if (dob) {
+                dob = sqlToJsDate(dob);
+            }
+            createdAt = sqlToJsDate(createdAt);
+            user = { id, uuid, username, email, pass, avatar, dob, role, createdAt };
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed select user admin");
+            resolve(user);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Delete an user from database - - - - - - - - - - - 
+async function deleteUserAdmin(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('DeleteUser', (err, rowCount) => {
+            if (err) {
+                reject("failed delete user admin");
+                console.log("err delete admin : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let message;
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed select user admin");
+            message = `User "${username}" no longer exists`;
+            resolve(message);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+function sqlToJsDate(sqlDate) {
+    sqlDate = sqlDate.toISOString().replace('Z', '').replace('T', '');
+
+    let date = sqlDate.substring(0, 10);
+    let arr = date.split('-');
+    arr = arr.reverse();
+    date = arr.join("/");
+
+    let time = sqlDate.substring(10, 18);
+    sqlDate = date //+ ', ' + time;
+
+    return sqlDate;
+}
+
 function escapeRegExp(string) {
     string = string.replace(/\r?\n|\r/g, " ");
     return string.replace(/[&\/\\#,+()$~%.:*?<>]/g, '\\$&'); // $& means the whole matched string
 }
-module.exports.escapeRegExp = escapeRegExp;

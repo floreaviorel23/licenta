@@ -1,21 +1,23 @@
-mixin mixinAddEditUser(type)
+mixin mixinAddEditUser(action, type)
     div
-        form(action=`/admin/action/add/${type}`, method="POST")
+        form(action=`/admin/action/${action}/${type}`, method="POST")
             .mb-3
                 label.form-label(for="username") Username
                 input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter username" name="username")
-            .mb-3
-                label.form-label(for='username') Email
-                input#exampleInputEmail1.form-control(type='email' name='email' aria-describedby='emailHelp' placeholder="Enter email")
+            -if(action == 'Add')
+                .mb-3
+                    label.form-label(for='username') Email
+                    input#exampleInputEmail1.form-control(type='email' name='email' aria-describedby='emailHelp' placeholder="Enter email")
             .mb-3
                 label.form-label(for="pswd") Password
                 input#pwd.form-control.border.rounded.border-1(type="password" placeholder="Enter password" name="pswd")
-            .mb-3
-                label.form-label(for="avatar") Avatar
-                input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
-            .mb-3
-                label.form-label(for='dateOfBirth') Date of Birth
-                input.mb-3.form-control#dateField(type="date" name='dob' max="2017-12-31" placeholder="DoB")
+            -if(action == 'Add')
+                .mb-3
+                    label.form-label(for="avatar") Avatar
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                .mb-3
+                    label.form-label(for='dateOfBirth') Date of Birth
+                    input.mb-3.form-control#dateField(type="date" name='dob' max="2017-12-31" placeholder="DoB")
             .mb-3
                 label.form-label(for='role') Role
                 select.form-select(name='role')
@@ -23,3 +25,7 @@ mixin mixinAddEditUser(type)
                     option(value='Admin') Admin
 
             button.btn.btn-primary(type='submit') Submit
+
+            button.btn.btn-primary.float-end(type='button' onclick=`location.href = '/admin'`) Go back
+
+            .mb-5

@@ -1,17 +1,34 @@
-mixin mixinSelectDeleteUser(type)
-    div
-        form
+mixin mixinSelectDeleteUser(action, type, results)
+
+    -let myPlaceholder;
+    -let myName;
+
+    if(type == 'User')
+        -myName = "username";
+        -myPlaceholder = "Enter username";
+
+    if(type == 'Person')
+        -myName = "person";
+        -myPlaceholder = "Enter person UUID";
+
+    div 
+        form(action=`/admin/action/${action}/${type}`, method="POST")
             .mb-3
-                label.form-label(for='exampleInputEmail1') Field 1
-                input#exampleInputEmail1.form-control(type='email' aria-describedby='emailHelp')
-                #emailHelp.form-text
-            .mb-3
-                label.form-label(for='exampleInputPassword1') Field 2
-                input#exampleInputPassword1.form-control(type='password')
-            .mb-3
-                label.form-label(for='exampleInputPassword1') Field 3
-                input#exampleInputPassword1.form-control(type='password')
-            .mb-3
-                label.form-label(for='exampleInputPassword1') Field 4
-                input#exampleInputPassword1.form-control(type='password')
+                label.form-label(for=`${myFor}`) #{myName}
+                input#username.form-control.border.rounded.border-1(type="text" placeholder=`${myPlaceholder}` name=`${myName}`)
+
             button.btn.btn-primary(type='submit') Submit
+
+            button.btn.btn-primary.float-end(type='button' onclick=`location.href = '/admin'`) Go back
+
+    -if(action == 'Select' && results && results != NULL && results.username)
+        .resultsDiv.mt-3
+            h4.mb-3 #{results.username} info :
+
+            -for(let property in results)
+                p.m-1 #{property} : #{results[property]}
+
+    -if(action == 'Delete' && results && results != NULL)
+        .resultsDiv.mt-3
+            h4.mb-3 #{results}
+
