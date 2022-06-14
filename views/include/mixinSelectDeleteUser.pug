@@ -21,12 +21,16 @@ mixin mixinSelectDeleteUser(action, type, results)
 
             button.btn.btn-primary.float-end(type='button' onclick=`location.href = '/admin'`) Go back
 
-    -if(action == 'Select' && results && results != NULL && results.username)
-        .resultsDiv.mt-3
-            h4.mb-3 #{results.username} info :
+    -if(action == 'Select')
+        -if(results && results != NULL && results.username)
+            .resultsDiv.mt-3
+                h4.mb-3 #{results.username} info :
 
-            -for(let property in results)
-                p.m-1 #{property} : #{results[property]}
+                -for(let property in results)
+                    p.m-1 #{property} : #{results[property]}
+        -else
+            .resultsDiv.mt-3
+                h4.mb-3 No #{type} Found
 
     -if(action == 'Delete' && results && results != NULL)
         .resultsDiv.mt-3
