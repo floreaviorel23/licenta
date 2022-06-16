@@ -539,6 +539,8 @@ router.post("/action/select/:uuid", urlencodedParser, async (req, res) => {
                         let authorName = await db.getAuthorsName(result.author);
                         result.author = authorName;
                     }
+                    let characters = await db.selectAnimeCharacters(result.uuid);
+                    result.characters = characters;
                 }
             }
             catch (err) {

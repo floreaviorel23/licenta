@@ -16,13 +16,12 @@ html(lang="en")
             .row
                 .col-3
                     .animeCard.rounded
-                        - const anime = {};
-                        - anime.imgPath = './images/Naruto.jpg';
-                        - anime.title = animeName;
-                        - anime.genres = ['Action', 'Adventure', 'Fantasy'];
+                        - const myAnime = {};
+                        - myAnime.imgPath = './images/Naruto.jpg';
+                        - myAnime.genres = ['Action', 'Adventure', 'Fantasy'];
 
                         .image-container.d-flex.justify-content-center
-                            img.animeImg.rounded(src=anime.imgPath, alt="")
+                            img.animeImg.rounded(src=myAnime.imgPath, alt="")
 
                         .addButtonDiv.d-flex.justify-content-center.my-3
                             button.btn.btn-primary.rounded(type='button') Add to Watchlist
@@ -36,10 +35,10 @@ html(lang="en")
                             .row.bg-dark.text-white.pt-3.px-3.rounded.mb-5
                                 .col-12          
                                     .animeTitle.mb-2
-                                        h2 #{animeName}
+                                        h2 #{anime.title}
                                     .authorDiv
-                                        p Author : asds
-                                .col-12.mt-4.pb-5.px-2
+                                        p Author : #{anime.author}
+                                .col-12.mt-4.pb-3.px-2
                                     .personalRatingDiv.float-end.mx-3
                                         span.averageRatingDiv.bg-info.p-3.text-white Personal Rating
                                         span.averageRatingValueDiv.bg-white.text-dark.p-3 10
@@ -48,17 +47,18 @@ html(lang="en")
                                         span.averageRatingDiv.bg-primary.p-3.text-white Average Rating
                                         span.averageRatingValueDiv.bg-white.text-dark.p-3 8.03
                                     
+                                    p Number of episodes : #{anime.numberOfEpisodes}
+
 
                             .row.mt-4
                                 .descriptionDiv.mb-5
-                                    p Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti, deserunt. Vel odio nihil nisi sunt. Minus pariatur sapiente perferendis et.
-                                    p Lorem ipsum dolor sit, amet consectetur adipisicing elit. Expedita aut molestiae soluta aperiam! Atque dicta impedit inventore in eos totam, explicabo qui illum, voluptate modi sunt ratione dolore harum ad dignissimos, voluptatibus voluptates recusandae reiciendis molestias vero molestiae. Dolorum excepturi tempora, possimus sapiente, molestiae culpa adipisci dolores id iure nisi corrupti quibusdam harum ducimus. Voluptate sint fugit enim quas vel ab dolore illum quasi autem cupiditate! Quasi numquam aliquam in.
+                                    p #{anime.description}
                             .row   
                                 .genresDiv.d-flex.justify-content-start.gap-3 
                                     p Genres :
-                                    a.link-primary(href='/anime/genre/asd') #{anime.genres[0]}
-                                    a.link-primary(href='/anime/genre/asd') #{anime.genres[1]}
-                                    a.link-primary(href='/anime/genre/asd') #{anime.genres[2]}
+                                    a.link-primary(href='/anime/genre/asd') #{myAnime.genres[0]}
+                                    a.link-primary(href='/anime/genre/asd') #{myAnime.genres[1]}
+                                    a.link-primary(href='/anime/genre/asd') #{myAnime.genres[2]}
 
 
             .row 
@@ -66,26 +66,26 @@ html(lang="en")
                     .charactersDiv.container.mt-3
                         h4 List of characters
                         .row.pt-2
-            
+
                             - const character = {};
                             - character.name = "ASD";
                             - character.imgPath = './images/characters/naruto/asd.jpg';
                             +mixinCharacterCard(character)
-                        
+
                             - character.imgPath = './images/characters/naruto/asd (6).png';
-                            +mixinCharacterCard(character)
-                        
-                            +mixinCharacterCard(character)
-                            
-                            +mixinCharacterCard(character)
-                    
-                            
-                            +mixinCharacterCard(character)
-                        
                             +mixinCharacterCard(character)
 
                             +mixinCharacterCard(character)
-                        
+
+                            +mixinCharacterCard(character)
+
+
+                            +mixinCharacterCard(character)
+
+                            +mixinCharacterCard(character)
+
+                            +mixinCharacterCard(character)
+
                             +mixinCharacterCard(character)
                 .row
                     .col-12
@@ -118,9 +118,8 @@ html(lang="en")
                     .row.d-flex.justify-content-center.g-5
                         .col-2
                             button.col-12.btn.btn-primary.rounded(type='button') Previous
-                        
+
                         .col-2
                             button.col-12.btn.btn-primary.rounded(type='button') Next
-            
+
             .row.pt-5
-                        

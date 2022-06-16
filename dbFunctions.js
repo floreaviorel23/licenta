@@ -1236,10 +1236,11 @@ module.exports = {
     addGenreToAnime: addGenreToAnime,
     selectAnimeGenres: selectAnimeGenres,
     addCharacterToAnime: addCharacterToAnime,
+    selectAnimeCharacters: selectAnimeCharacters,
 
     // Manga :
     selectMangaAdmin: selectMangaAdmin,
     deleteMangaAdmin: deleteMangaAdmin,
     registerNewMangaAdmin: registerNewMangaAdmin,
-    updateMangaAdmin: updateMangaAdmin,
+    updateMangaAdmin: updateMangaAdmin
 }
