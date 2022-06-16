@@ -15,17 +15,17 @@ html(lang="en")
 
         .container.mx-5.px-5.mt-4
             h1.text-center #{action} #{type}
+            .row 
+                .col-lg-3
 
-            -if(type == "User" || type == "Person")
-                .row 
-                    .col-3
+                .col-lg-6
+                    .container.mx-5.px-5.mt-2
+                        -if(action == 'Select' || action == 'Delete')
+                            +mixinSelectDeleteUser(action, type, results)
 
-                    .col-6
-                        .container.mx-5.px-5.mt-2
-                            -if(action == 'Select' || action == 'Delete')
-                                +mixinSelectDeleteUser(action, type, results)
+                        -if(action == 'Add' || action == 'Edit')
+                            +mixinAddEditUser(action, type)
 
-                            -if(action == 'Add' || action == 'Edit')
-                                +mixinAddEditUser(action, type)
+                .col-lg-3
 
-                    .col-3
+        script(src="./js/adminAction.js") 

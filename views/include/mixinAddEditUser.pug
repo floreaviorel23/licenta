@@ -1,31 +1,157 @@
 mixin mixinAddEditUser(action, type)
     div
         form(action=`/admin/action/${action}/${type}`, method="POST")
-            .mb-3
-                label.form-label(for="username") Username
-                input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter username" name="username")
-            -if(action == 'Add')
+
+
+            -if(type == 'User')
                 .mb-3
-                    label.form-label(for='username') Email
-                    input#exampleInputEmail1.form-control(type='email' name='email' aria-describedby='emailHelp' placeholder="Enter email")
-            .mb-3
-                label.form-label(for="pswd") Password
-                input#pwd.form-control.border.rounded.border-1(type="password" placeholder="Enter password" name="pswd")
-            -if(action == 'Add')
+                    label.form-label(for="username") Username
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter username" name="username")
+                -if(action == 'Add')
+                    .mb-3
+                        label.form-label(for='username') Email
+                        input#exampleInputEmail1.form-control(type='email' name='email' aria-describedby='emailHelp' placeholder="Enter email")
+                .mb-3
+                    label.form-label(for="pswd") Password
+                    input#pwd.form-control.border.rounded.border-1(type="password" placeholder="Enter password" name="pswd")
+                -if(action == 'Add')
+                    .mb-3
+                        label.form-label(for="avatar") Avatar
+                        input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                    .mb-3
+                        label.form-label(for='dateOfBirth') Date of Birth
+                        input.mb-3.form-control#dateField(type="date" name='dob' max="2017-12-31" placeholder="DoB")
+                .mb-3
+                    label.form-label(for='role') Role
+                    select.form-select(name='role')
+                        option(value='User' selected='selected') User
+                        option(value='Admin') Admin
+                // End if type == 'User'
+
+
+            -if(type == 'Person')
+                -if(action == 'Edit')
+                    .mb-3
+                        label.form-label(for="personUuid") Uuid
+                        input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter person UUID" name="personUuid")
+                .mb-3
+                    label.form-label(for="name") Name
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter name" name="name")
                 .mb-3
                     label.form-label(for="avatar") Avatar
                     input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
                 .mb-3
                     label.form-label(for='dateOfBirth') Date of Birth
                     input.mb-3.form-control#dateField(type="date" name='dob' max="2017-12-31" placeholder="DoB")
-            .mb-3
-                label.form-label(for='role') Role
-                select.form-select(name='role')
-                    option(value='User' selected='selected') User
-                    option(value='Admin') Admin
+
+            // End if type == 'Person'
+
+
+            -if(type == 'Author')
+                -if(action == 'Add')
+                    .mb-3
+                        label.form-label(for="personUuid") Uuid
+                        input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter person UUID" name="personUuid")
+
+            // End if type == 'Author'
+
+
+            -if(type == 'Voice Actor')
+                -if(action == 'Add')
+                    .mb-3
+                        label.form-label(for="personUuid") Uuid
+                        input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter person UUID" name="personUuid")
+
+            // End if type == 'Voice Actor'
+
+
+            -if(type == 'Character')
+                -if(action == 'Edit')
+                    .mb-3
+                        label.form-label(for="characterUuid") Uuid
+                        input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter character UUID" name="characterUuid")
+                .mb-3
+                    label.form-label(for="name") Name
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter name" name="name")
+                .mb-3
+                    label.form-label(for="avatar") Avatar
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                .mb-3
+                    label.form-label(for="type") Type
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter type (main, side, etc.)" name="type")
+            // End if type == 'Character'
+
+
+
+            -if(type == 'Anime')
+                -if(action == 'Edit')
+                    .mb-3
+                        label.form-label(for="animeUuid") Uuid
+                        input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter anime UUID" name="animeUuid")
+                .mb-3
+                    label.form-label(for="title") Title
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter title" name="title")
+                .mb-3
+                    label.form-label(for="author") Author
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter author UUID" name="author")
+                .mb-3
+                    label(for='description') Description
+                    textarea.form-control(rows='3' name='description')
+                .mb-3
+                    label.form-label(for="avatar") Avatar
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                .mb-3
+                    label.form-label(for="numberOfEpisodes") Number of episodes
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter number of episodes" name="numberOfEpisodes")
+                .mb-3
+                    label.form-label(for="genres") Add Genres
+                    .row.anime-genres-div
+                        .col-10
+                            input.mt-1.form-control.border.rounded.border-1(list='dataListOptions' id='input_0' placeholder="Enter genre" name="genres")
+                            datalist#dataListOptions
+                                option(value = 'Action')
+                                option(value = 'Adventure')
+                                option(value = 'Fantasy')
+                                option(value = 'Drama')
+                        .col-2
+                            button.w-100.mt-1.rounded.btn.btn-primary(type='button' id='add_button_0' onclick='addGenreAnime(0)') Add
+                .mb-3
+                    label.form-label(for="characters") Add Characters
+                    label.form-label(for="va") &nbsp (Voice Actors)
+                    .row.anime-characters-div
+                        .col-5
+                            input.mt-1.form-control.border.rounded.border-1(type="text" id='input_character_0' placeholder="Enter character UUID" name="characters")
+                        .col-5
+                            input.mt-1.form-control.border.rounded.border-1(type="text" id='input_va_0' placeholder="Enter voice actor UUID" name="va")
+                        .col-2
+                            button.w-100.mt-1.rounded.btn.btn-primary(type='button' id='add_button_char_0' onclick='addCharacterAnime(0)') Add
+                .mb-5
+                
+            // End if type == 'Anime'
+
+            -if(type == 'Manga')
+                -if(action == 'Edit')
+                    .mb-3
+                        label.form-label(for="mangaUuid") Uuid
+                        input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter manga UUID" name="mangaUuid")
+                .mb-3
+                    label.form-label(for="title") Title
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter title" name="title")
+                .mb-3
+                    label.form-label(for="author") Author
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter author UUID" name="author")
+                .mb-3
+                    label(for='description') Description
+                    textarea.form-control(rows='3' name='description')
+                .mb-3
+                    label.form-label(for="avatar") Avatar
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                .mb-3
+                    label.form-label(for="numberOfChapters") Number of chapters
+                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter number of chapters" name="numberOfChapters")
+            // End if type == 'Manga'
 
             button.btn.btn-primary(type='submit') Submit
-
             button.btn.btn-primary.float-end(type='button' onclick=`location.href = '/admin'`) Go back
 
             .mb-5

@@ -9,19 +9,56 @@ mixin mixinSelectDeleteUser(action, type, results)
 
     if(type == 'Person')
         -myName = "person";
-        -myPlaceholder = "Enter person UUID";
+        -myPlaceholder = "Enter person name";
+        - if(action == 'Delete')
+            -myPlaceholder = "Enter person UUID";
+
+    if(type == 'Author')
+        -myName = "author";
+        -myPlaceholder = "Enter author name";
+        - if(action == 'Delete')
+            -myPlaceholder = "Enter author UUID";
+
+    if(type == 'Voice Actor')
+        -myName = "voiceActor";
+        -myPlaceholder = "Enter voice actor name";
+        - if(action == 'Delete')
+            -myPlaceholder = "Enter voice actor UUID";
+
+    if(type == 'Character')
+        -myName = "character";
+        -myPlaceholder = "Enter character name";
+        - if(action == 'Delete')
+            -myPlaceholder = "Enter character UUID";
+
+    if(type == 'Anime')
+        -myName = "anime";
+        -myPlaceholder = "Enter anime name";
+        - if(action == 'Delete')
+            -myPlaceholder = "Enter anime UUID";
+
+    if(type == 'Manga')
+        -myName = "manga";
+        -myPlaceholder = "Enter manga name";
+        - if(action == 'Delete')
+            -myPlaceholder = "Enter manga UUID";
+
+    // FORM
 
     div 
         form(action=`/admin/action/${action}/${type}`, method="POST")
             .mb-3
-                label.form-label(for=`${myFor}`) #{myName}
+                label.form-label(for=`${myName}`) #{myName}
                 input#username.form-control.border.rounded.border-1(type="text" placeholder=`${myPlaceholder}` name=`${myName}`)
 
             button.btn.btn-primary(type='submit') Submit
 
             button.btn.btn-primary.float-end(type='button' onclick=`location.href = '/admin'`) Go back
 
-    -if(action == 'Select')
+
+    // USER
+
+    -if(action == 'Select' && type == 'User')
         -if(results && results != NULL && results.username)
             .resultsDiv.mt-3
                 h4.mb-3 #{results.username} info :
@@ -30,9 +67,116 @@ mixin mixinSelectDeleteUser(action, type, results)
                     p.m-1 #{property} : #{results[property]}
         -else
             .resultsDiv.mt-3
-                h4.mb-3 No #{type} Found
+                h4.mb-3 #{messageFail}
 
-    -if(action == 'Delete' && results && results != NULL)
+    -if(action == 'Delete' && type == 'User' && results && results != NULL)
         .resultsDiv.mt-3
             h4.mb-3 #{results}
 
+
+    // PERSON
+
+    -if(action == 'Select' && type == 'Person')
+        -if(results && results != NULL && results[0])
+            .resultsDiv.mt-3
+                each person in results
+                    h4.my-3 #{person.person_name} info :
+                    -for(let property in person)
+                        p.m-1 #{property} : #{person[property]}
+        -else
+            .resultsDiv.mt-3
+                h4.mb-3 #{messageFail}
+
+    -if(action == 'Delete' && type == 'Person' && results && results != NULL)
+        .resultsDiv.mt-3
+            h4.mb-3 #{results}
+
+
+    // AUTHOR
+
+    -if(action == 'Select' && type == 'Author')
+        -if(results && results != NULL && results[0])
+            .resultsDiv.mt-3
+                each author in results
+                    h4.my-3 #{author.person_name} info :
+                    -for(let property in author)
+                        p.m-1 #{property} : #{author[property]}
+        -else
+            .resultsDiv.mt-3
+                h4.mb-3 #{messageFail}
+
+    -if(action == 'Delete' && type == 'Author' && results && results != NULL)
+        .resultsDiv.mt-3
+            h4.mb-3 #{results}
+
+
+    // VOICE ACTOR
+
+    -if(action == 'Select' && type == 'Voice Actor')
+        -if(results && results != NULL && results[0])
+            .resultsDiv.mt-3
+                each va in results
+                    h4.my-3 #{va.person_name} info :
+                    -for(let property in va)
+                        p.m-1 #{property} : #{va[property]}
+        -else
+            .resultsDiv.mt-3
+                h4.mb-3 #{messageFail}
+
+    -if(action == 'Delete' && type == 'Voice Actor' && results && results != NULL)
+        .resultsDiv.mt-3
+            h4.mb-3 #{results}
+
+
+
+    // CHARACTER
+
+    -if(action == 'Select' && type == 'Character')
+        -if(results && results != NULL && results[0])
+            .resultsDiv.mt-3
+                each character in results
+                    h4.my-3 #{character.character_name} info :
+                    -for(let property in character)
+                        p.m-1 #{property} : #{character[property]}
+        -else
+            .resultsDiv.mt-3
+                h4.mb-3 #{messageFail}
+    -if(action == 'Delete' && type == 'Character' && results && results != NULL)
+        .resultsDiv.mt-3
+            h4.mb-3 #{results}
+
+            
+    // ANIME
+
+    -if(action == 'Select' && type == 'Anime')
+        -if(results && results != NULL && results[0])
+            .resultsDiv.mt-3
+                each anime in results
+                    h4.my-3 #{anime.title} info :
+                    -for(let property in anime)
+                        p.m-1 #{property} : #{anime[property]}
+        -else
+            .resultsDiv.mt-3
+                h4.mb-3 #{messageFail}
+
+    -if(action == 'Delete' && type == 'Anime' && results && results != NULL)
+        .resultsDiv.mt-3
+            h4.mb-3 #{results}
+
+
+    // MANGA
+
+    -if(action == 'Select' && type == 'Manga')
+        -if(results && results != NULL && results[0])
+            .resultsDiv.mt-3
+                each manga in results
+                    h4.my-3 #{manga.title} info :
+                    -for(let property in manga)
+                        p.m-1 #{property} : #{manga[property]}
+        -else
+            .resultsDiv.mt-3
+                h4.mb-3 #{messageFail}
+
+    -if(action == 'Delete' && type == 'Manga' && results && results != NULL)
+        .resultsDiv.mt-3
+            h4.mb-3 #{results}

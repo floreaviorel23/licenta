@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
 //app.use('/css', express.static(path.join(__dirname, 'public/css')))
 
-
+// - - - - - - - - - - Routing - - - - - - - - -
 const db = require('./dbFunctions');
 const adminRouter = require('./routes/admin');
 const animeRouter = require('./routes/anime');
