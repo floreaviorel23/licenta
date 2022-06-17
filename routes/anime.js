@@ -23,15 +23,23 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/:uuid", async (req, res) => {
+router.get("/:uuid/page/:uuid2", async (req, res) => {
     console.log("GET Request from /anime/uuid");
     const uuid = req.params.uuid;
+    const page = req.params.uuid2;
+
     let toSend = {};
+
+    if (isNaN(page) || page < 1) {
+        res.status(400);
+        res.send("Page not existing");
+    }
 
     try {
         let anime = await db.selectAnimeAdmin(uuid);
         if (anime.length == 1 && anime[0].title == uuid) {
             toSend.type = 'anime';
+            toSend.page = page;
             if (anime[0].author == null || anime[0].author == '') {
                 anime[0].author = 'N/A';
             }
@@ -44,6 +52,34 @@ router.get("/:uuid", async (req, res) => {
                     console.log('No author found');
                 }
             }
+
+            let genres;
+            try {
+                genres = await db.selectAnimeGenres(anime[0].uuid);
+                anime[0].genres = genres;
+            }
+            catch {
+                console.log('Genres catch');
+            }
+
+            let characters;
+            try {
+                characters = await db.selectAnimeCharacters(anime[0].uuid);
+                anime[0].characters = characters;
+            }
+            catch {
+                console.log('Characters catch');
+            }
+
+            let comments;
+            try {
+                comments = await db.selectAnimeComments(anime[0].uuid, page);
+                anime[0].comments = comments;
+            }
+            catch {
+                console.log('Characters catch');
+            }
+            //console.log(anime[0].comments);
             toSend.anime = anime[0];
             res.status(200);
             res.render("animePage", toSend);

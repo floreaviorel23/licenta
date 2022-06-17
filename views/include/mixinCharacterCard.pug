@@ -8,6 +8,9 @@ mixin mixinCharacterCard(character)
                     .card-body.pt-2.px-3
                         h5.card-title #{character.name}
                         p.card-text.mt-2
-                            | This Voice Actor
-                        p.card-text.mt-5
-                            small.text-muted Side character
+                            -if(character.va && character.va != '')
+                                | #{character.va} &nbsp
+                            -else
+                                | Voice Actor N/A
+                            p.card-text.mt-5
+                                small.text-muted #{character.type}

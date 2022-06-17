@@ -445,7 +445,7 @@ router.post("/action/select/:uuid", urlencodedParser, async (req, res) => {
             try {
                 //If selectUserAdmin fails (because of database constraints), it will catch an error
                 results = await db.selectUserAdmin(username);
-                //console.log('User : ', user);
+                //console.log(results);
             }
             catch (err) {
                 res.status(400);

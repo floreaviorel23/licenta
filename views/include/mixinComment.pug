@@ -1,23 +1,23 @@
-mixin mixinComment(com, userName)
+mixin mixinComment(com)
     // Comment container
     .container.my-4.py-3
         .row
             // Avatar + author name(under)
             .col-2.text-center.p-0
                 div
-                    p.display-2 #{com.avatar}
+                    p.display-2 😀
                 div 
                     p
-                        strong #{com.author}
+                        strong #{com.username}
 
             .col-10.container.p-0
                 // Date + (edited) + close button
                 .row 
-                    span.small #{com.createdAt} 
-                        span.small(title=`last edit : ${com.editedAt}`)
-                            strong #{messageEdit}
+                    span.small #{com.comDate} 
+                        span.small(title=`last edit : `)
+                            //strong #{messageEdit}
 
-                        if(userName && userName === com.author)
+                        if(userName && userName === com.username)
                             span
                                 .float-end
                                     // Edit button + icon
@@ -36,5 +36,5 @@ mixin mixinComment(com, userName)
                 // Message
                 .row 
                     div
-                        h6 #{com.message}
+                        h6 #{com.text}
         hr

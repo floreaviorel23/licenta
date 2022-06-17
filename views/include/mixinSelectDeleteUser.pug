@@ -59,12 +59,12 @@ mixin mixinSelectDeleteUser(action, type, results)
     // USER
 
     -if(action == 'Select' && type == 'User')
-        -if(results && results != NULL && results.username)
-            .resultsDiv.mt-3
-                h4.mb-3 #{results.username} info :
-
-                -for(let property in results)
-                    p.m-1 #{property} : #{results[property]}
+        -if(results && results != NULL)
+            each result in results
+                .resultsDiv.mt-3
+                h4.mb-3 #{result.username} info :
+                -for(let property in result)
+                    p.m-1 #{property} : #{result[property]}
         -else
             .resultsDiv.mt-3
                 h4.mb-3 #{messageFail}

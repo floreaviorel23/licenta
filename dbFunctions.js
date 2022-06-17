@@ -215,6 +215,7 @@ async function selectUserAdmin(username) {
 
         dbrequest.addParameter('username', TYPES.NVarChar, username);
 
+        let users = [];
         let user = {};
         dbrequest.on('row', (columns) => {
             let [id, uuid, username, email, pass, avatar, dob, role, createdAt] =
@@ -224,11 +225,12 @@ async function selectUserAdmin(username) {
             }
             createdAt = sqlToJsDate(createdAt);
             user = { id, uuid, username, email, pass, avatar, dob, role, createdAt };
+            users.push(user);
         });
 
         dbrequest.on('requestCompleted', () => {
             console.log("Request completed select user admin");
-            resolve(user);
+            resolve(users);
         });
 
         connection.callProcedure(dbrequest);
@@ -733,10 +735,10 @@ async function selectAnimeAdmin(anime) {
         let people = [];
         let myPerson = {};
         dbrequest.on('row', (columns) => {
-            let [uuid, title, author, description, image, numberOfEpisodes] =
-                [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value];
+            let [uuid, title, author, description, image, numberOfEpisodes, numberOfComments] =
+                [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value, columns[6].value];
 
-            myPerson = { uuid, title, author, description, image, numberOfEpisodes };
+            myPerson = { uuid, title, author, description, image, numberOfEpisodes, numberOfComments };
             people.push(myPerson);
         });
 
@@ -802,15 +804,51 @@ async function selectAnimeCharacters(animeUuid) {
         let characters = [];
         let myCharacter = {};
         dbrequest.on('row', (columns) => {
-            let name = columns[0].value;
+            let [name, type, image, va] = [columns[0].value, columns[1].value, columns[2].value, columns[3].value]
 
-            myCharacter = name;
+            myCharacter = { name, type, image, va }
             characters.push(myCharacter);
         });
 
         dbrequest.on('requestCompleted', () => {
             console.log("Request completed SelectAnimeCharacters");
             resolve(characters);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select all comments about an anime with that uuid - - - - - - - - - - - 
+async function selectAnimeComments(animeUuid, page) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        let offset = (page - 1) * 8;
+        const dbrequest = new Request('SelectAnimeComments', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectAnimeComments");
+                console.log("err SelectAnimeComments : ", err);
+            }
+        });
+
+        dbrequest.addParameter('animeUuid', TYPES.UniqueIdentifier, animeUuid);
+        dbrequest.addParameter('offset', TYPES.Int, offset);
+
+        let comments = [];
+        let myComment = {};
+        dbrequest.on('row', (columns) => {
+            let [username, text, comDate] = [columns[0].value, columns[1].value, columns[2].value];
+            comDate = sqlToJsDate(comDate);
+            myComment = { username, text, comDate }
+            comments.push(myComment);
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectAnimeCharacters");
+            resolve(comments);
         });
 
         connection.callProcedure(dbrequest);
@@ -895,7 +933,7 @@ async function addCharacterToAnime(characterUuid, voiceActorUuid, animeUuid) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
-        
+
         console.log('here');
 
         if (!voiceActorUuid || voiceActorUuid == '')
@@ -1237,6 +1275,7 @@ module.exports = {
     selectAnimeGenres: selectAnimeGenres,
     addCharacterToAnime: addCharacterToAnime,
     selectAnimeCharacters: selectAnimeCharacters,
+    selectAnimeComments: selectAnimeComments,
 
     // Manga :
     selectMangaAdmin: selectMangaAdmin,
