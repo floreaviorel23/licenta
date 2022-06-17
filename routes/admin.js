@@ -227,10 +227,12 @@ router.post("/action/add/:uuid", urlencodedParser, async (req, res) => {
             }
             else break;
         }
+        /*
         for (let i = 0; i < characters.length; i++) {
             console.log(`char : ${characters[i]}`);
-            console.log(`va : ${vas[i]}`);  
+            console.log(`va : ${vas[i]}`);
         }
+        */
         const [title, author, description, avatar, numberOfEpisodes] = [req.body.title, req.body.author, req.body.description, req.body.avatar, req.body.numberOfEpisodes];
 
         if (title && avatar && numberOfEpisodes && !isNaN(numberOfEpisodes)) {
@@ -253,7 +255,8 @@ router.post("/action/add/:uuid", urlencodedParser, async (req, res) => {
                         try {
                             await db.addCharacterToAnime(characters[i], vas[i], animeUuid);
                         }
-                        catch {
+                        catch (err) {
+                            console.error('err add char', err);
                             console.log(`couldnt add character ${character} to anime ${title}`);
                         }
                     }
@@ -264,6 +267,7 @@ router.post("/action/add/:uuid", urlencodedParser, async (req, res) => {
                 return;
             }
             catch (err) {
+                console.error(err);
                 res.status(400);
                 res.send("Not successful");
                 return;
