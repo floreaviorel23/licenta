@@ -1,9 +1,9 @@
 mixin mixinWatchlistEntry(entry)
 
-    - let bgColor;
-    - if(entry.status === 'Completed') bgColor = 'lightgreen'
+    //- let bgColor;
+    //- if(entry.status === 'Completed') bgColor = 'lightgreen'
 
-    .row.mb-4(style=`background-color: ${bgColor}`).rounded
+    .row.mb-4.rounded.single-entry-div
         .col-1.d-flex.align-items-center
             p(style="font-weight: bold") #{entry.number}.
 
@@ -11,7 +11,8 @@ mixin mixinWatchlistEntry(entry)
             img.img-watchlist(src=`${entry.imgSrc}` alt='Card image')
 
         .col-4.d-flex.align-items-center 
-            p(style="font-weight: bold") #{entry.anime}
+            a(href=`/anime/${entry.title}/page/1`) 
+                p(style="font-weight: bold") #{entry.title}
 
         .col-1.d-flex.align-items-center
             p #{entry.status}
@@ -23,6 +24,6 @@ mixin mixinWatchlistEntry(entry)
             p #{entry.averageRating}
             
         .col-1.d-flex.align-items-center.justify-content-center
-            p #{entry.addedAt}
+            p #{entry.createdAt}
         
         .col-1

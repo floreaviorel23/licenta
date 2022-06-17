@@ -227,7 +227,10 @@ router.post("/action/add/:uuid", urlencodedParser, async (req, res) => {
             }
             else break;
         }
-        //console.log(`characters : ${characters}, vas : ${vas}`);
+        for (let i = 0; i < characters.length; i++) {
+            console.log(`char : ${characters[i]}`);
+            console.log(`va : ${vas[i]}`);  
+        }
         const [title, author, description, avatar, numberOfEpisodes] = [req.body.title, req.body.author, req.body.description, req.body.avatar, req.body.numberOfEpisodes];
 
         if (title && avatar && numberOfEpisodes && !isNaN(numberOfEpisodes)) {
@@ -539,8 +542,13 @@ router.post("/action/select/:uuid", urlencodedParser, async (req, res) => {
                         let authorName = await db.getAuthorsName(result.author);
                         result.author = authorName;
                     }
-                    let characters = await db.selectAnimeCharacters(result.uuid);
-                    result.characters = characters;
+                    let characters = await db.selectAnimeCharacters(result.title);
+                    let chars = [];
+                    for (let index = 0; index < characters.length; index++) {
+                        const element = characters[index].name;
+                        chars.push(element);
+                    }
+                    result.characters = chars;
                 }
             }
             catch (err) {

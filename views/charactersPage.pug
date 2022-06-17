@@ -10,24 +10,14 @@ html(lang="en")
         - let navUserName = 'dada da';
         +navbar(navUserName)
         
-        - name = name.charAt(0).toUpperCase() + name.slice(1)
+        - animeTitle = animeTitle.charAt(0).toUpperCase() + animeTitle.slice(1)
         .container.mt-3.p-5
             .row.mb-5
                 .col-12.title
-                    h1 #{name}'s list of characters
-
-            - const character = {};
-            - character.name = "ASD";
-            - character.imgPath = './images/characters/naruto/asd.jpg';
+                    h1 #{animeTitle}'s list of characters
 
             .row 
-                +mixinCharacterCard(character)
-                +mixinCharacterCard(character)
-                +mixinCharacterCard(character)
-                +mixinCharacterCard(character)
-                +mixinCharacterCard(character)
-                +mixinCharacterCard(character)
-                +mixinCharacterCard(character)
-                +mixinCharacterCard(character)
-                +mixinCharacterCard(character)
-                +mixinCharacterCard(character)
+                each character in characters
+                    - character.imgPath = './images/characters/naruto/asd (2).jpg';
+                    +mixinCharacterCard(character)
+

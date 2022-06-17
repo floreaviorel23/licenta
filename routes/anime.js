@@ -25,10 +25,12 @@ router.get("/", async (req, res) => {
 
 router.get("/:uuid/page/:uuid2", async (req, res) => {
     console.log("GET Request from /anime/uuid");
-    const uuid = req.params.uuid;
+    const animeTitle = req.params.uuid;
     const page = req.params.uuid2;
 
     let toSend = {};
+    //let user = req.session.userName;
+    let user = 'user1';
 
     if (isNaN(page) || page < 1) {
         res.status(400);
@@ -36,8 +38,11 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
     }
 
     try {
-        let anime = await db.selectAnimeAdmin(uuid);
-        if (anime.length == 1 && anime[0].title == uuid) {
+        let anime = await db.selectExactAnimeAdmin(animeTitle, user);
+        console.log(anime);
+        if (anime.length == 1 && anime[0].title == animeTitle) {
+            //console.log(anime[0]);
+
             toSend.type = 'anime';
             toSend.page = page;
             if (anime[0].author == null || anime[0].author == '') {
@@ -64,7 +69,7 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
 
             let characters;
             try {
-                characters = await db.selectAnimeCharacters(anime[0].uuid);
+                characters = await db.selectAnimeCharacters(anime[0].title);
                 anime[0].characters = characters;
             }
             catch {
@@ -91,7 +96,7 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
         }
     }
     catch (err) {
-        console.log('err selectAnimeAdmin');
+        console.log('err selectExactAnimeAdmin');
         console.log(err);
         res.status(400);
         res.send("Page not existing");
@@ -103,10 +108,15 @@ router.get("/watchlist/:uuid", async (req, res) => {
     console.log("GET Request from anime/watchlist/uuid");
     const uuid = req.params.uuid;
 
+    let toSend = {};
+    toSend.username = uuid;
+
     try {
-        console.log("username : " + uuid);
+        let rows = await db.selectUserAnimeWatchlist(uuid);
+        //console.log(rows);
+        toSend.rows = rows;
         res.status(200);
-        res.render("animeListPage", { userName: uuid });
+        res.render("animeListPage", toSend);
     }
     catch (err) {
         console.log(err);
@@ -133,17 +143,26 @@ router.get("/genre/:uuid", async (req, res) => {
 
 router.get("/characters/:uuid", async (req, res) => {
     console.log("GET Request from /anime/characters/uuid");
-    const uuid = req.params.uuid;
+    const animeTitle = req.params.uuid;
 
+    let toSend = {};
+    toSend.type = 'Anime';
+    toSend.animeTitle = animeTitle;
+
+    let characters;
     try {
-        console.log("Genre : " + uuid);
+        characters = await db.selectAnimeCharacters(animeTitle);
+        toSend.characters = characters;
+
         res.status(200);
-        res.render("charactersPage", { name: uuid, type: 'Anime' });
+        res.render("charactersPage", toSend);
     }
     catch (err) {
         console.log(err);
         res.status(500);
-        res.send("GET request failed");
+        res.send('GET request didnt work');
+        console.log('Characters catch');
+        return
     }
 });
 

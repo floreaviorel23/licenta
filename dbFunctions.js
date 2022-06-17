@@ -717,11 +717,16 @@ async function updateCharacterAdmin(characterUuid, name, avatar, type) {
 }
 
 
-// - - - - - - - - - - Select all info about all animes with that name - - - - - - - - - - - 
-async function selectAnimeAdmin(anime) {
+// - - - - - - - - - - Select all info about all animes with that name - - - - - - - - - - -
+
+async function selectAnimeAdmin(anime, user) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
+
+        // user is optional, if provided will return also a personal rating of anime given by user specified
+        if (!user || user == '')
+            user = TYPES.Null;
 
         const dbrequest = new Request('ReadAnime', (err, rowCount) => {
             if (err) {
@@ -731,14 +736,62 @@ async function selectAnimeAdmin(anime) {
         });
 
         dbrequest.addParameter('title', TYPES.NVarChar, anime);
+        dbrequest.addParameter('username', TYPES.NVarChar, user);
 
         let people = [];
         let myPerson = {};
         dbrequest.on('row', (columns) => {
-            let [uuid, title, author, description, image, numberOfEpisodes, numberOfComments] =
-                [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value, columns[6].value];
+            let [uuid, title, author, description, image, numberOfEpisodes, numberOfComments, averageRating] =
+                [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value, columns[6].value, columns[7].value];
+            myPerson = { uuid, title, author, description, image, numberOfEpisodes, numberOfComments, averageRating };
+            if (user && user != '') {
+                let personalRating = columns[8].value;
+                myPerson.personalRating = personalRating
+            }
+            people.push(myPerson);
+        });
 
-            myPerson = { uuid, title, author, description, image, numberOfEpisodes, numberOfComments };
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed select anime admin");
+            resolve(people);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select all info about all animes with EXACT that name - - - - - - - - - - -
+
+async function selectExactAnimeAdmin(anime, user) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        // user is optional, if provided will return also a personal rating of anime given by user specified
+        if (!user || user == '')
+            user = TYPES.Null;
+
+        const dbrequest = new Request('ReadExactAnime', (err, rowCount) => {
+            if (err) {
+                reject("failed select anime admin");
+                console.log("err select anime : ", err);
+            }
+        });
+
+        dbrequest.addParameter('title', TYPES.NVarChar, anime);
+        dbrequest.addParameter('username', TYPES.NVarChar, user);
+
+        let people = [];
+        let myPerson = {};
+        dbrequest.on('row', (columns) => {
+            let [uuid, title, author, description, image, numberOfEpisodes, numberOfComments, averageRating] =
+                [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value, columns[6].value, columns[7].value];
+            myPerson = { uuid, title, author, description, image, numberOfEpisodes, numberOfComments, averageRating };
+            if (user && user != '') {
+                let personalRating = columns[8].value;
+                myPerson.personalRating = personalRating
+            }
             people.push(myPerson);
         });
 
@@ -786,8 +839,44 @@ async function selectAnimeGenres(animeUuid) {
     return prom;
 }
 
-// - - - - - - - - - - Select all characters about an anime with that uuid - - - - - - - - - - - 
-async function selectAnimeCharacters(animeUuid) {
+
+// - - - - - - - - - - Select an user anime watchlist - - - - - - - - - - - 
+async function selectUserAnimeWatchlist(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectUserAnimeWatchlist', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectUserAnimeWatchlist");
+                console.log("err SelectUserAnimeWatchlist : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let [title, status, personalRating, averageRating, createdAt] = [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value];
+            createdAt = sqlToJsDate(createdAt);
+            myResult = { title, status, personalRating, averageRating, createdAt };
+
+            results.push(myResult);
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectUserAnimeWatchlist");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select all characters about an anime with that exact title - - - - - - - - - - - 
+async function selectAnimeCharacters(animeTitle) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
@@ -799,7 +888,7 @@ async function selectAnimeCharacters(animeUuid) {
             }
         });
 
-        dbrequest.addParameter('animeUuid', TYPES.UniqueIdentifier, animeUuid);
+        dbrequest.addParameter('animeTitle', TYPES.NVarChar, animeTitle);
 
         let characters = [];
         let myCharacter = {};
@@ -1267,6 +1356,7 @@ module.exports = {
 
     // Anime :
     selectAnimeAdmin: selectAnimeAdmin,
+    selectExactAnimeAdmin: selectExactAnimeAdmin,
     getAuthorsName: getAuthorsName,
     deleteAnimeAdmin: deleteAnimeAdmin,
     registerNewAnimeAdmin: registerNewAnimeAdmin,
@@ -1281,5 +1371,8 @@ module.exports = {
     selectMangaAdmin: selectMangaAdmin,
     deleteMangaAdmin: deleteMangaAdmin,
     registerNewMangaAdmin: registerNewMangaAdmin,
-    updateMangaAdmin: updateMangaAdmin
+    updateMangaAdmin: updateMangaAdmin,
+
+    // Watchlist Anime :
+    selectUserAnimeWatchlist: selectUserAnimeWatchlist
 }

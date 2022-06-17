@@ -40,11 +40,11 @@ html(lang="en")
                                 .col-12.mt-4.pb-3.px-2
                                     .personalRatingDiv.float-end.mx-3
                                         span.averageRatingDiv.bg-info.p-3.text-white Personal Rating
-                                        span.averageRatingValueDiv.bg-white.text-dark.p-3 10
+                                        span.averageRatingValueDiv.bg-white.text-dark.p-3 #{anime.personalRating}
 
                                     .ratingDiv.float-end.mx-3
                                         span.averageRatingDiv.bg-primary.p-3.text-white Average Rating
-                                        span.averageRatingValueDiv.bg-white.text-dark.p-3 8.03
+                                        span.averageRatingValueDiv.bg-white.text-dark.p-3 #{anime.averageRating}
 
                                     p Number of episodes : #{anime.numberOfEpisodes}
 
@@ -72,7 +72,7 @@ html(lang="en")
                     .row
                         .col-12
                             .container-fluid
-                                button.col-2.rounded.btn.btn-primary(type='button' onclick=`location.href = '/${type}/characters/${animeName}';`) See All Characters
+                                button.col-2.rounded.btn.btn-primary(type='button' onclick=`location.href = '/${type}/characters/${anime.title}';`) See All Characters
 
 
 
@@ -90,7 +90,6 @@ html(lang="en")
                         -if(page > 1)
                             .col-2
                                 button#prevButton.col-12.btn.btn-primary.rounded(type='button' onclick=`location.href = '/${type}/${anime.title}/page/${prevPage}';`) Previous
-
                         -if(parseInt(anime.numberOfComments) / parseInt(page) > 8)
                             .col-2
                                 button#nextButton.col-12.btn.btn-primary.rounded(type='button' onclick=`location.href = '/${type}/${anime.title}/page/${nextPage}';`) Next

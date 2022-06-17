@@ -25,6 +25,12 @@
     height: 120px;
 }
 
-.entries-container .row {
-    background-color: blac
+
+.single-entry-div{
+    background-color: #DCDCDC;
+}
+
+.single-entry-div a{
+    text-decoration: none;
+    color: black;
 }
