@@ -30,7 +30,7 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
 
     let toSend = {};
     //let user = req.session.userName;
-    let user = 'user1';
+    let user = 'user nou';
 
     if (isNaN(page) || page < 1) {
         res.status(400);
@@ -39,7 +39,7 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
 
     try {
         let anime = await db.selectExactAnimeAdmin(animeTitle, user);
-        console.log(anime);
+        //console.log(anime);
         if (anime.length == 1 && anime[0].title == animeTitle) {
             //console.log(anime[0]);
 
@@ -100,6 +100,93 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
         console.log(err);
         res.status(400);
         res.send("Page not existing");
+        return;
+    }
+});
+
+
+router.post("/addToWatchlist/:uuid", urlencodedParser, async (req, res) => {
+    console.log("POST request from /anime/addToWatchlist/:uuid");
+    const animeTitle = req.params.uuid;
+    const [myStatus, myRating] = [req.body.status, req.body.rating];
+    //console.log(myStatus, myRating);
+    //let user = req.session.userName;
+    let user = 'user nou';
+    if (user && user != '' && myStatus && myStatus != '' && animeTitle && animeTitle != '') {
+        try {
+            const result = await db.addNewWatchlistAnime(user, animeTitle, myStatus, myRating);
+
+            res.status(200);
+            res.redirect(`/anime/${animeTitle}/page/1`);
+            return;
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).send('Error database');
+            return;
+        }
+    }
+    else {
+        res.status(400).send('Error list of parameters');
+        return;
+    }
+});
+
+router.post("/add-new-comment/:uuid", urlencodedParser, async (req, res) => {
+    console.log("POST request from /add-new-comment/:uuid");
+    const animeTitle = req.params.uuid;
+
+    let myComment = req.body.message;
+    //myComment = escapeRegExp(myComment);
+    console.log(myComment);
+
+    let user = 'user nou';
+    if (user && user != '' && myComment && myComment != '' && animeTitle && animeTitle != '') {
+        try {
+            const result = await db.addNewCommentAnime(user, animeTitle, myComment);
+
+            res.status(200);
+            res.redirect(`/anime/${animeTitle}/page/1`);
+            return;
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).send('Error database');
+            return;
+        }
+    }
+    else {
+        res.status(400).send('Error list of parameters');
+        return;
+    }
+});
+
+
+router.delete("/delete-comment/:uuid/:uuid2", urlencodedParser, async (req, res) => {
+    console.log("Delete request from /delete-comment/:uuid/:uuid2");
+
+    let comUuid = req.params.uuid;
+    let animeTitle = req.params.uuid2;
+
+    console.log(comUuid, animeTitle);
+
+    let user = 'user nou';
+    if (user && user != '' && comUuid && comUuid != '' && animeTitle && animeTitle != '') {
+        try {
+            const result = await db.deleteCommentAnime(comUuid);
+
+            res.status(200);
+            res.redirect(`/anime/${animeTitle}/page/1`);
+            return;
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).send('Error database');
+            return;
+        }
+    }
+    else {
+        res.status(400).send('Error list of parameters');
         return;
     }
 });
@@ -165,5 +252,9 @@ router.get("/characters/:uuid", async (req, res) => {
         return
     }
 });
+
+function escapeRegExp(string) {
+    return string.replace(/[&\/\\#,+()$~%.'":*?<>]/g, '\\$&'); // $& means the whole matched string
+}
 
 module.exports = router;

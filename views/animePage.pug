@@ -12,18 +12,29 @@ html(lang="en")
         +navbar(navUserName)
         //h5 Anime is : #{anime.numberOfComments}
 
-        .container.mt-5
-            .row
-                .col-3
+        .container.mt-5.top-level-container(data-animeTitle = `${anime.title}`)
+            .row.mb-5.pb-3
+                .col-3.animeLeftDiv
                     .animeCard.rounded
                         - const myAnime = {};
                         - myAnime.imgPath = './images/Naruto.jpg';
 
-                        .image-container.d-flex.justify-content-center
+                        .image-container.d-flex.justify-content-center.mb-4
                             img.animeImg.rounded(src=myAnime.imgPath, alt="")
 
-                        .addButtonDiv.d-flex.justify-content-center.my-3
-                            button.btn.btn-primary.rounded(type='button') Add to Watchlist
+                        -if(!anime.myStatus)
+                            .addButtonDiv.d-flex.justify-content-center.my-3
+                                button.btn.btn-primary.rounded(type='button' onclick='addToWatchlistAction()') Add to Watchlist
+                        -else
+                            .editButtonDiv.align-items-center.my-3
+                                h6.float-start.mt-2
+                                    | #{anime.myStatus}
+                                    -if(anime.myStatus == 'Completed')
+                                        | &nbsp ✔
+                                    -else if(anime.myStatus == 'Currently watching')
+                                        | &nbsp 📺
+                                button.btn.float-end.btn-danger.btn-sm.rounded(type='button' onclick='removeToWatchlistAction()') Remove
+                                button.btn.float-end.me-2.btn-primary.btn-sm.rounded(type='button' onclick='editToWatchlistAction()') Edit
 
 
 
@@ -40,7 +51,12 @@ html(lang="en")
                                 .col-12.mt-4.pb-3.px-2
                                     .personalRatingDiv.float-end.mx-3
                                         span.averageRatingDiv.bg-info.p-3.text-white Personal Rating
-                                        span.averageRatingValueDiv.bg-white.text-dark.p-3 #{anime.personalRating}
+                                        span.averageRatingValueDiv.bg-white.text-dark.p-3 
+                                            -if(anime.personalRating && anime.personalRating<=10 && anime.personalRating>0)
+                                                | #{anime.personalRating}
+                                            -else
+                                                | -
+
 
                                     .ratingDiv.float-end.mx-3
                                         span.averageRatingDiv.bg-primary.p-3.text-white Average Rating
@@ -59,7 +75,7 @@ html(lang="en")
                                         a.link-primary(href=`/anime/genre/${genre}`) #{genre}
 
 
-            .row 
+            .row.mt-1
                 .col-12 
                     .charactersDiv.container.mt-3
                         h4 List of characters
@@ -74,6 +90,23 @@ html(lang="en")
                             .container-fluid
                                 button.col-2.rounded.btn.btn-primary(type='button' onclick=`location.href = '/${type}/characters/${anime.title}';`) See All Characters
 
+            -let user='user nou';
+            .row
+                // Form container
+                .container
+                    if(!user)
+                        div.text-center.mx-auto.my-5
+                            h4 You need to be logged in in order to post a comment
+                    else
+                        .row.add-comment-form.mt-5
+                            .col-lg-4.empty-space
+                            .content.col-lg-4.border.border-3.border-dark.rounded.px-4.py-3
+                                div(type="button" onclick="showAddCommentForm()")
+                                    h3.d-inline Add new comment
+
+                                    span.float-end
+                                        div.d-flex.align-content-center
+                                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32"><path fill="currentColor" d="M16 4c6.6 0 12 5.4 12 12s-5.4 12-12 12S4 22.6 4 16S9.4 4 16 4m0-2C8.3 2 2 8.3 2 16s6.3 14 14 14s14-6.3 14-14S23.7 2 16 2z"/><path fill="currentColor" d="M24 15h-7V8h-2v7H8v2h7v7h2v-7h7z"/></svg>
 
 
             .row.mt-5.pt-5

@@ -787,10 +787,13 @@ async function selectExactAnimeAdmin(anime, user) {
         dbrequest.on('row', (columns) => {
             let [uuid, title, author, description, image, numberOfEpisodes, numberOfComments, averageRating] =
                 [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value, columns[6].value, columns[7].value];
+            averageRating = Number(averageRating).toFixed(2);
             myPerson = { uuid, title, author, description, image, numberOfEpisodes, numberOfComments, averageRating };
             if (user && user != '') {
                 let personalRating = columns[8].value;
+                let myStatus = columns[9].value;
                 myPerson.personalRating = personalRating
+                myPerson.myStatus = myStatus;
             }
             people.push(myPerson);
         });
@@ -929,9 +932,9 @@ async function selectAnimeComments(animeUuid, page) {
         let comments = [];
         let myComment = {};
         dbrequest.on('row', (columns) => {
-            let [username, text, comDate] = [columns[0].value, columns[1].value, columns[2].value];
+            let [username, text, comDate, comUuid] = [columns[0].value, columns[1].value, columns[2].value, columns[3].value];
             comDate = sqlToJsDate(comDate);
-            myComment = { username, text, comDate }
+            myComment = { username, text, comDate, comUuid }
             comments.push(myComment);
         });
 
@@ -1308,6 +1311,87 @@ async function deleteMangaAdmin(mangaUuid) {
 }
 
 
+// - - - - - - - - - - Add a new watchlist anime entry  - - - - - - - - - - - 
+async function addNewWatchlistAnime(user, animeTitle, myStatus, myRating) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+        if (!myRating || myRating == '')
+            myRating = TYPES.Null;
+
+        const dbrequest = new Request('AddNewWatchlistAnime', (err, rowCount) => {
+            if (err) {
+                reject("failed AddNewWatchlistAnime admin");
+                console.log("err AddNewWatchlistAnime admin : ", err);
+            }
+        });
+        dbrequest.addParameter('username', TYPES.NVarChar, user);
+        dbrequest.addParameter('anime_title', TYPES.NVarChar, animeTitle);
+        dbrequest.addParameter('my_status', TYPES.NVarChar, myStatus);
+        dbrequest.addParameter('my_rating', TYPES.Int, myRating);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed AddNewWatchlistAnime admin");
+            resolve("success");
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Add a new comment to an anime  - - - - - - - - - - - 
+async function addNewCommentAnime(user, animeTitle, myComment) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('AddNewCommentAnime', (err, rowCount) => {
+            if (err) {
+                reject("failed AddNewCommentAnime");
+                console.log("err AddNewCommentAnime : ", err);
+            }
+        });
+        dbrequest.addParameter('username', TYPES.NVarChar, user);
+        dbrequest.addParameter('anime_title', TYPES.NVarChar, animeTitle);
+        dbrequest.addParameter('text_message', TYPES.NVarChar, myComment);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed AddNewCommentAnime admin");
+            resolve("success");
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+
+// - - - - - - - - - - Delete a comment (of an anime) - - - - - - - - - - - 
+async function deleteCommentAnime(comUuid) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('DeleteCommentAnime', (err, rowCount) => {
+            if (err) {
+                reject("failed deleteCommentAnime");
+                console.log("err deleteCommentAnime : ", err);
+            }
+        });
+
+        dbrequest.addParameter('uuid', TYPES.UniqueIdentifier, comUuid);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed deleteCommentAnime");
+            resolve('deleteCommentAnime');
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
 function sqlToJsDate(sqlDate) {
     sqlDate = sqlDate.toISOString().replace('Z', '').replace('T', '');
 
@@ -1367,6 +1451,9 @@ module.exports = {
     selectAnimeCharacters: selectAnimeCharacters,
     selectAnimeComments: selectAnimeComments,
 
+    addNewCommentAnime: addNewCommentAnime,
+    deleteCommentAnime: deleteCommentAnime,
+    
     // Manga :
     selectMangaAdmin: selectMangaAdmin,
     deleteMangaAdmin: deleteMangaAdmin,
@@ -1374,5 +1461,6 @@ module.exports = {
     updateMangaAdmin: updateMangaAdmin,
 
     // Watchlist Anime :
-    selectUserAnimeWatchlist: selectUserAnimeWatchlist
+    selectUserAnimeWatchlist: selectUserAnimeWatchlist,
+    addNewWatchlistAnime: addNewWatchlistAnime
 }
