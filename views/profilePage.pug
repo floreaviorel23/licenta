@@ -18,11 +18,15 @@ html(lang="en")
                 .col-3
                     .div.d-flex.justify-content-center.profile-image-div
                         img.pfp.rounded(src='images/hmm.jpg')
-                
+                    .div.ms-4.ps-3.mt-3
+                        button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button"  onclick=`location.href = '/anime/watchlist/${username}';` class="" aria-label="Edit") Anime Watchlist 
+                    .div.ms-4.ps-3.mt-2
+                        button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button" onclick=`location.href = '/manga/watchlist/${username}';` class="" aria-label="Edit") Manga Watchlist 
+               
                 .col-3.d-flex.align-content-center
                     .container-fluid
                         .row 
-                            h1 #{userName}
+                            h1 #{username}
                         .row
                             h6 Joined 28 May 2022
                         .row.mt-3
@@ -48,36 +52,38 @@ html(lang="en")
                     p Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque deserunt, tenetur maiores nulla tempore debitis corrupti eveniet illum laboriosam porro aperiam, corporis quae, fugiat fuga suscipit? Atque mollitia vel, sequi modi excepturi quisquam sint, soluta repellendus quaerat quidem placeat? Officiis cumque rerum accusantium minus, quod modi velit molestiae dignissimos quasi ipsam, illo similique amet consequatur nisi repellendus soluta harum quia.
 
             .row.px-3
-                h2 Favorite anime and manga
-                .container-fluid.px-3
-                    .row
-                        .col-12.title
-                            h1 #{genre} #{type}
-                    
-                    - const anime = {};
-                    - anime.imgPath = './images/Naruto.jpg';
-                    - anime.title = 'Naruto';
-                    - anime.genres = ['Action', 'Adventure', 'Fantasy'];
+                .col-6
+                    h2 Favorite animes
+                    .container-fluid.px-3
+                        .row
+                            .col-12.title
+                                h1 #{genre} #{type}
+                        
+                        - const anime = {};
+                        - anime.imgPath = './images/Naruto.jpg';
+                        - anime.title = 'Naruto';
 
-                    .row
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
+                        .row
+                            each fav in favoriteAnimes
+                                -fav.imgPath = './images/Naruto.jpg';
+                                +mixinFavDiv(fav)
 
-            .row.px-3.mt-5
-                h2 Your friends favorite shows
-                .container-fluid.px-3
-                    .row
-                        .col-12.title
-                            h1 #{genre} #{type}
+                .col-6
+                    h2 Favorite mangas
+                    .container-fluid.px-3
+                        .row
+                            .col-12.title
+                                h1 #{genre} #{type}
 
-                    .row
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
-                        +mixinGenreDiv(anime)
+                        .row
+                            each fav in favoriteMangas
+                                -fav.imgPath = './images/Naruto.jpg';
+                                +mixinFavDiv(fav)
+
+            .row.mt-5.px-3.pt-4
+                h2.mb-1 List of friends
+                .container.mt-3
+                    each friend in friends
+                        span.me-4
+                            a(href=`/profile/${friend.friendName}`).text-decoration-none
+                                span #{friend.friendName}

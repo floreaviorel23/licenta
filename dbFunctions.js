@@ -1483,6 +1483,105 @@ async function selectNumberOfAnimesWatched(username) {
     return prom;
 }
 
+// - - - - - - - - - - Select favorite animes of an user - - - - - - - - - - - 
+async function selectFavoriteAnimes(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectFavoriteAnimes', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectFavoriteAnimes");
+                console.log("err SelectFavoriteAnimes : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let [animeTitle, animeImagePath, rating] = [columns[0].value, columns[1].value, columns[2].value];
+            myResult = { animeTitle, animeImagePath, rating };
+            results.push(myResult)
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectFavoriteAnimes");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select favorite mangas of an user - - - - - - - - - - - 
+async function selectFavoriteMangas(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectFavoriteMangas', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectFavoriteMangas");
+                console.log("err SelectFavoriteMangas : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let [animeTitle, animeImagePath, rating] = [columns[0].value, columns[1].value, columns[2].value];
+            myResult = { animeTitle, animeImagePath, rating };
+            results.push(myResult)
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectFavoriteMangas");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select all friends of an user - - - - - - - - - - - 
+async function selectAllFriends(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectAllFriends', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectAllFriends");
+                console.log("err SelectAllFriends : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let friendName = columns[0].value;
+            myResult = { friendName };
+            results.push(myResult)
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectAllFriends");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
 // - - - - - - - - - - Select number of mangas read of an user - - - - - - - - - - - 
 async function selectNumberOfMangasRead(username) {
     const prom = new Promise(async (resolve, reject) => {
@@ -1513,6 +1612,8 @@ async function selectNumberOfMangasRead(username) {
     });
     return prom;
 }
+
+
 
 // - - - - - - - - - - Add a new manga in admin mode to database - - - - - - - - - - - 
 async function registerNewMangaAdmin(title, author, description, avatar, numberOfChapters) {
@@ -1795,6 +1896,10 @@ module.exports = {
 
     selectNumberOfFriends: selectNumberOfFriends,
     selectNumberOfMangasRead: selectNumberOfMangasRead,
-    selectNumberOfAnimesWatched: selectNumberOfAnimesWatched
+    selectNumberOfAnimesWatched: selectNumberOfAnimesWatched,
 
+    // Profile :
+    selectFavoriteAnimes: selectFavoriteAnimes,
+    selectFavoriteMangas: selectFavoriteMangas,
+    selectAllFriends: selectAllFriends
 }

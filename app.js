@@ -77,7 +77,6 @@ app.get("/", async (req, res) => {
             statistics.numberOfMangasRead = numberOfMangasRead;
 
             toSend.statistics = statistics;
-            console.log('stats : ', statistics);
             res.status(200);
             res.render('index', toSend);
         }
@@ -120,7 +119,16 @@ app.get("/profile/:uuid", async (req, res) => {
     toSend.username = username;
     try {
         let statistics = {};
-        
+
+        let favoriteAnimes = await db.selectFavoriteAnimes(username);
+        toSend.favoriteAnimes = favoriteAnimes;
+
+        let favoriteMangas = await db.selectFavoriteMangas(username);
+        toSend.favoriteMangas = favoriteMangas;
+
+        let friends = await db.selectAllFriends(username);
+        toSend.friends = friends;
+
         let favoriteGenre = await db.selectFavoriteGenre(username);
         statistics.favoriteGenre = favoriteGenre;
 
