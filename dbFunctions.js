@@ -948,6 +948,199 @@ async function selectAnimeComments(animeUuid, page) {
     return prom;
 }
 
+
+// - - - - - - - - - - Select animes from each genre (that has at least 3) - - - - - - - - - - - 
+async function selectAnimesFromEachGenre() {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectAnimesFromEachGenre', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectAnimesFromEachGenre");
+                console.log("err SelectAnimesFromEachGenre : ", err);
+            }
+        });
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let [genreName, animeTitle, animeImagePath] = [columns[0].value, columns[1].value, columns[2].value];
+            myResult = { genreName, animeTitle, animeImagePath }
+            results.push(myResult);
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectAnimesFromEachGenre");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select all genres - - - - - - - - - - - 
+async function selectAllGenres() {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectAllGenres', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectAllGenres");
+                console.log("err SelectAllGenres : ", err);
+            }
+        });
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let genreName = columns[0].value;
+            myResult = genreName;
+            results.push(myResult);
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectAllGenres");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select top 12 animes  - - - - - - - - - - - 
+async function selectTopAnimes() {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectTopAnimes', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectTopAnimes");
+                console.log("err SelectTopAnimes : ", err);
+            }
+        });
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let [animeTitle, animeImagePath] = [columns[0].value, columns[1].value];
+            myResult = { animeTitle, animeImagePath }
+            results.push(myResult);
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectAllGenres");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select 6 most recent animes  - - - - - - - - - - - 
+async function selectRecentAnimes() {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectRecentAnimes', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectRecentAnimes");
+                console.log("err SelectRecentAnimes : ", err);
+            }
+        });
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let [animeTitle, animeImagePath] = [columns[0].value, columns[1].value];
+            myResult = { animeTitle, animeImagePath }
+            results.push(myResult);
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectRecentAnimes");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select 6 most recent animes  - - - - - - - - - - - 
+async function selectRecentComments() {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectRecentComments', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectRecentComments");
+                console.log("err SelectRecentComments : ", err);
+            }
+        });
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let [user, animeTitle, comment, createdAt] = [columns[0].value, columns[1].value, columns[2].value, columns[3].value];
+            createdAt = sqlToJsDate(createdAt);
+
+            if (comment.length > 200)
+                comment = comment.substring(0, 200);
+            myResult = { user, animeTitle, comment, createdAt };
+            results.push(myResult);
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectRecentComments");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select all animes from a genre - - - - - - - - - - - 
+async function selectAllAnimesFromGenre(genreName) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectAllAnimesFromGenre', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectAllAnimesFromGenre");
+                console.log("err SelectAllAnimesFromGenre : ", err);
+            }
+        });
+
+        dbrequest.addParameter('genre_name', TYPES.NVarChar, genreName);
+
+        let results = [];
+        let myResult = {};
+        dbrequest.on('row', (columns) => {
+            let [animeTitle, animeImagePath] = [columns[0].value, columns[1].value];
+            myResult = { animeTitle, animeImagePath }
+            results.push(myResult);
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectAllAnimesFromGenre");
+            resolve(results);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
 // - - - - - - - - - - Add a new anime in admin mode to database - - - - - - - - - - - 
 async function registerNewAnimeAdmin(title, author, description, avatar, numberOfEpisodes) {
     const prom = new Promise(async (resolve, reject) => {
@@ -1188,6 +1381,132 @@ async function selectMangaAdmin(manga) {
         dbrequest.on('requestCompleted', () => {
             console.log("Request completed select manga admin");
             resolve(people);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select favorite genre of an user - - - - - - - - - - - 
+async function selectFavoriteGenre(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectFavoriteGenre', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectFavoriteGenre");
+                console.log("err SelectFavoriteGenre : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let result;
+        dbrequest.on('row', (columns) => {
+            let [genreName, count] =
+                [columns[0].value, columns[1].value];
+            result = { genreName, count };
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectFavoriteGenre");
+            resolve(result);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+
+// - - - - - - - - - - Select number of friends of an user - - - - - - - - - - - 
+async function selectNumberOfFriends(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectNumberOfFriends', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectNumberOfFriends");
+                console.log("err SelectNumberOfFriends : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let result;
+        dbrequest.on('row', (columns) => {
+            let numberOfFriends = columns[0].value;
+            result = numberOfFriends;
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectFavoriteGenre");
+            resolve(result);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select number of animes watched of an user - - - - - - - - - - - 
+async function selectNumberOfAnimesWatched(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectNumberOfAnimesWatched', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectNumberOfAnimesWatched");
+                console.log("err SelectNumberOfAnimesWatched : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let result;
+        dbrequest.on('row', (columns) => {
+            let numberOfAnimesWatched = columns[0].value;
+            result = numberOfAnimesWatched;
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectNumberOfAnimesWatched");
+            resolve(result);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select number of mangas read of an user - - - - - - - - - - - 
+async function selectNumberOfMangasRead(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('SelectNumberOfMangasRead', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectNumberOfMangasRead");
+                console.log("err SelectNumberOfMangasRead : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let result;
+        dbrequest.on('row', (columns) => {
+            let numberOfMangasRead = columns[0].value;
+            result = numberOfMangasRead;
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectNumberOfMangasRead");
+            resolve(result);
         });
 
         connection.callProcedure(dbrequest);
@@ -1453,7 +1772,11 @@ module.exports = {
 
     addNewCommentAnime: addNewCommentAnime,
     deleteCommentAnime: deleteCommentAnime,
-    
+
+    selectAnimesFromEachGenre: selectAnimesFromEachGenre,
+    selectAllGenres: selectAllGenres,
+    selectAllAnimesFromGenre: selectAllAnimesFromGenre,
+
     // Manga :
     selectMangaAdmin: selectMangaAdmin,
     deleteMangaAdmin: deleteMangaAdmin,
@@ -1462,5 +1785,16 @@ module.exports = {
 
     // Watchlist Anime :
     selectUserAnimeWatchlist: selectUserAnimeWatchlist,
-    addNewWatchlistAnime: addNewWatchlistAnime
+    addNewWatchlistAnime: addNewWatchlistAnime,
+
+    // Index :
+    selectTopAnimes: selectTopAnimes,
+    selectRecentAnimes: selectRecentAnimes,
+    selectRecentComments: selectRecentComments,
+    selectFavoriteGenre: selectFavoriteGenre,
+
+    selectNumberOfFriends: selectNumberOfFriends,
+    selectNumberOfMangasRead: selectNumberOfMangasRead,
+    selectNumberOfAnimesWatched: selectNumberOfAnimesWatched
+
 }

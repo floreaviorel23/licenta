@@ -17,19 +17,9 @@ html(lang="en")
             .row
                 .col-12.title
                     h1 #{genre} #{type}
-            
-            - const anime = {};
-            - anime.imgPath = './images/Naruto.jpg';
-            - anime.title = 'Naruto';
-            - anime.genres = ['Action', 'Adventure', 'Fantasy'];
+
 
             .row
-                +mixinGenreDiv(anime)
-                +mixinGenreDiv(anime)
-                +mixinGenreDiv(anime)
-                +mixinGenreDiv(anime)
-                +mixinGenreDiv(anime)
-                +mixinGenreDiv(anime)
-                +mixinGenreDiv(anime)
-                +mixinGenreDiv(anime)
-                +mixinGenreDiv(anime)
+                each anime in animes 
+                    -anime.imgPath = './images/Naruto.jpg';
+                    +mixinGenreDiv(anime)

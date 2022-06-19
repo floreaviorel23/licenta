@@ -1,5 +1,6 @@
 include ./include/mixinAnimeCard.pug
 include ./include/statistics.pug
+include ./include/mixinRecentComment.pug
 include ./common/navbar.pug
 include ./common/head.pug
 
@@ -13,7 +14,6 @@ html(lang="en")
         - const anime = {};
         - anime.imgPath = './images/Naruto.jpg';
         - anime.title = 'Naruto';
-        - anime.genres = ['Action', 'Adventure', 'Fantasy'];
 
         .container 
             .row
@@ -34,24 +34,22 @@ html(lang="en")
                                         .item.active
                                             .container
                                                 .d-flex.cards-container
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
+                                                    -for(let i=0; i<4; i++)
+                                                        -topAnimes[i].imgPath = './images/Naruto.jpg';
+                                                        +mixinAnimeCard(topAnimes[i])
+
                                         .item
                                             .container
                                                 .d-flex.cards-container
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
+                                                    -for(let i=4; i<8; i++)
+                                                        -topAnimes[i].imgPath = './images/Naruto.jpg';
+                                                        +mixinAnimeCard(topAnimes[i])
                                         .item
                                             .container
                                                 .d-flex.cards-container
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
+                                                    -for(let i=8; i<12; i++)
+                                                        -topAnimes[i].imgPath = './images/Naruto.jpg';
+                                                        +mixinAnimeCard(topAnimes[i])
                                                     
                                     // Left and right controls
                                     a.left.carousel-control.rounded-2(href='#myAnimeCarousel' data-slide='prev')
@@ -134,12 +132,10 @@ html(lang="en")
                             .container-fluid.mt-5
                                 h4 Recently added anime
                                 .recently-added.d-flex.justify-content-evenly
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
+                                    each anime in recentAnimes
+                                        -anime.imgPath = './images/Naruto.jpg';
+                                        +mixinAnimeCard(anime)
+                                    
                     
                     .row
                         .col-12  
@@ -158,17 +154,14 @@ html(lang="en")
                     .row
                         .col-12
                             .container-fluid.my-5.statistics.py-4
-                                +statistics()
+                                +statistics(statistics)
                     .row.mt-5
                         .col-12 
-                            .container-fluid.recent-reviews-div.p-4
-                                p Recent comments
+                            .container-fluid.recent-reviews-div.rounded
+                                p.reviews-title Recent anime comments
                                 hr
-                                p com 1 
-                                p com 2
-                                p com 3
-                                p com 4
-                                p com 5
+                                each comment in recentComments
+                                    +mixinRecentComment(comment)
                     
     
         

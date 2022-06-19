@@ -45,14 +45,41 @@ app.listen(PORT, () => {
 
 app.get("/", async (req, res) => {
     console.log("GET Request from /");
+    let toSend = {};
+    let username = 'user nou';
     try {
         if (!req.session.userName && 0) {
             res.status(200);
             res.redirect('/login');
         }
         else {
+            let statistics = {};
+
+            let topAnimes = await db.selectTopAnimes();
+            toSend.topAnimes = topAnimes;
+
+            let recentAnimes = await db.selectRecentAnimes();
+            toSend.recentAnimes = recentAnimes;
+
+            let recentComments = await db.selectRecentComments();
+            toSend.recentComments = recentComments;
+
+            let favoriteGenre = await db.selectFavoriteGenre(username);
+            statistics.favoriteGenre = favoriteGenre;
+
+            let numberOfFriends = await db.selectNumberOfFriends(username);
+            statistics.numberOfFriends = numberOfFriends;
+
+            let numberOfAnimesWatched = await db.selectNumberOfAnimesWatched(username);
+            statistics.numberOfAnimesWatched = numberOfAnimesWatched;
+
+            let numberOfMangasRead = await db.selectNumberOfMangasRead(username);
+            statistics.numberOfMangasRead = numberOfMangasRead;
+
+            toSend.statistics = statistics;
+            console.log('stats : ', statistics);
             res.status(200);
-            res.render('index');
+            res.render('index', toSend);
         }
     }
     catch (err) {
@@ -88,10 +115,28 @@ app.get("/profile/:uuid", async (req, res) => {
     console.log("GET Request from profile/uuid");
     const uuid = req.params.uuid;
 
+    let toSend = {};
+    let username = 'user nou';
+    toSend.username = username;
     try {
-        console.log("username : " + uuid);
+        let statistics = {};
+        
+        let favoriteGenre = await db.selectFavoriteGenre(username);
+        statistics.favoriteGenre = favoriteGenre;
+
+        let numberOfFriends = await db.selectNumberOfFriends(username);
+        statistics.numberOfFriends = numberOfFriends;
+
+        let numberOfAnimesWatched = await db.selectNumberOfAnimesWatched(username);
+        statistics.numberOfAnimesWatched = numberOfAnimesWatched;
+
+        let numberOfMangasRead = await db.selectNumberOfMangasRead(username);
+        statistics.numberOfMangasRead = numberOfMangasRead;
+
+        toSend.statistics = statistics;
+
         res.status(200);
-        res.render("profilePage", { userName: uuid });
+        res.render("profilePage", toSend);
     }
     catch (err) {
         console.log(err);

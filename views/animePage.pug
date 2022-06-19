@@ -60,7 +60,11 @@ html(lang="en")
 
                                     .ratingDiv.float-end.mx-3
                                         span.averageRatingDiv.bg-primary.p-3.text-white Average Rating
-                                        span.averageRatingValueDiv.bg-white.text-dark.p-3 #{anime.averageRating}
+                                        span.averageRatingValueDiv.bg-white.text-dark.p-3
+                                            -if(anime.averageRating && anime.averageRating<=10 && anime.averageRating > 0)
+                                                | #{anime.averageRating}
+                                            -else
+                                                | -
 
                                     p Number of episodes : #{anime.numberOfEpisodes}
 

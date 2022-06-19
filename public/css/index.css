@@ -86,6 +86,7 @@
     margin: 0;
     padding: 0;
     margin-top: 3px;
+    min-height: 80px;
 }
 
 .card-body p {
@@ -95,8 +96,12 @@
 .card-title {
     margin: 0;
     font-weight: bold;
+    height: 100%;
 }
 
+.asd{
+    height: 100%;
+}
 .anime-genres {
     font-size: 12px;
     color: rgb(122, 122, 122);
@@ -105,7 +110,6 @@
 
 .statistics{
     width: 100%;
-    border: 1px solid black
 }
 
 .statistics th{
@@ -116,9 +120,16 @@
     font-weight: bold;
 }
 
+.recent-reviews-div .reviews-title{
+    font-weight: bold;
+}
+
+.very-small-text{
+    font-size: 12px;
+}
+
 .recent-reviews-div{
     width: 100%;
-    border: 1px solid black;
 }
 
 .carousel-indicators {

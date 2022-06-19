@@ -34,10 +34,6 @@ mixin navbar(userName)
                                 a.nav-link(href='/anime') Anime
                                 li.nav-item
                                 a.nav-link(href='/manga') Manga
-                                li.nav-item
-                                a.nav-link(href='#help') Help
-                                li.nav-item
-                                a.nav-link(href='/admin') Admin
                                 -if(user && user != '')
                                     li.nav-item
                                     a.nav-link(href=`/anime/watchlist/${user}`) 
@@ -45,6 +41,11 @@ mixin navbar(userName)
                                     li.nav-item
                                     a.nav-link(href=`/manga/watchlist/${user}`) 
                                         | Watchlist&nbspManga
+                                li.nav-item
+                                a.nav-link(href='#help') Help
+                                li.nav-item
+                                a.nav-link(href='/admin') Admin
+
                         .col-3
                         //- empty space for alignment
 

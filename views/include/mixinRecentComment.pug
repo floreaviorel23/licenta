@@ -1,0 +1,12 @@
+mixin mixinRecentComment(com)
+    .container-fluid
+        .row
+            div
+                a(href=`/anime/${com.animeTitle}/page/1`).text-decoration-none #{com.animeTitle}
+                h6.small.mt-2 #{com.comment}
+                p.very-small-text 
+                    | (added at #{com.createdAt} by 
+                    a(href=`profile/${com.user}`).text-decoration-none
+                        | #{com.user})
+        hr.p-0.mb-2
+

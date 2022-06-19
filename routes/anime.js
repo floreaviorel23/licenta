@@ -13,6 +13,43 @@ router.get("/", async (req, res) => {
     const toSend = {};
     toSend.type = 'Anime';
     try {
+        let animes = await db.selectAnimesFromEachGenre();
+        let genres = await db.selectAllGenres();
+
+        let actionAnime = [], comedyAnime = [], fantasyAnime = [], dramaAnime = [], adventureAnime = [], romanceAnime = [];
+
+        for (let i = 0; i < animes.length; i++) {
+            switch (animes[i].genreName) {
+                case 'Action':
+                    actionAnime.push(animes[i]);
+                    break;
+                case 'Comedy':
+                    comedyAnime.push(animes[i]);
+                    break;
+                case 'Fantasy':
+                    fantasyAnime.push(animes[i]);
+                    break;
+                case 'Drama':
+                    dramaAnime.push(animes[i]);
+                    break;
+                case 'Adventure':
+                    adventureAnime.push(animes[i]);
+                    break;
+                case 'Romance':
+                    romanceAnime.push(animes[i]);
+                    break;
+                default:
+            }
+        }
+
+        toSend.actionAnime = actionAnime;
+        toSend.comedyAnime = comedyAnime;
+        toSend.fantasyAnime = fantasyAnime;
+        toSend.dramaAnime = dramaAnime;
+        toSend.adventureAnime = adventureAnime;
+        toSend.romanceAnime = romanceAnime;
+
+        toSend.genres = genres;
         res.status(200);
         res.render("animeSearchPage", toSend);
     }
@@ -214,18 +251,26 @@ router.get("/watchlist/:uuid", async (req, res) => {
 
 router.get("/genre/:uuid", async (req, res) => {
     console.log("GET Request from /anime/genre/uuid");
-    const uuid = req.params.uuid;
+    const genreName = req.params.uuid;
+    let toSend = {};
 
-    try {
-        console.log("Genre : " + uuid);
-        res.status(200);
-        res.render("genrePage", { genre: uuid, type: 'Anime' });
-    }
-    catch (err) {
-        console.log(err);
-        res.status(500);
-        res.send("GET request failed");
-    }
+    toSend.type = 'Anime';
+    toSend.genre = genreName;
+
+
+    if (genreName && genreName != '')
+        try {
+            let animes = await db.selectAllAnimesFromGenre(genreName)
+            toSend.animes = animes;
+            console.log(toSend);
+            res.status(200);
+            res.render("genrePage", toSend);
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500);
+            res.send("GET request failed");
+        }
 });
 
 router.get("/characters/:uuid", async (req, res) => {
