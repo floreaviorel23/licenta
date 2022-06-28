@@ -19,8 +19,6 @@ let config = {
     }
 };
 let connection = new Connection(config);
-
-
 // - - - - - - - - - - Database connection - - - - - - - - -
 function dbConnection() {
     connection.connect((err) => {
