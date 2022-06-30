@@ -8,8 +8,7 @@ html(lang="en")
     +head("Anime List Page")
     link(rel="stylesheet" href="./css/animeListPage.css")
     body 
-        - let navUserName = 'dada';
-        +navbar(navUserName)
+        +navbar(userName, userRole)
 
         // Jumbotron
         .container-fluid.mt-5
@@ -18,7 +17,7 @@ html(lang="en")
 
                 .col-8
                     .bg-image.p-5.mb-5.jumboimg
-                        h1.mb-3 #{username}'s Anime Watchlist
+                        h1.mb-3 #{userProfile}'s Anime Watchlist
                 .col-2
         // Jumbotron
 

@@ -11,8 +11,7 @@ html(lang="en")
     link(rel="stylesheet" href="./css/adminPage.css")
     
     body(onload="onBodyLoad()")
-        - let navUserName = 'dada da';
-        +navbar(navUserName)
+        +navbar(userName, userRole)
 
         .container.mt-3.py-3
             .row

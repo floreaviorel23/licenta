@@ -263,6 +263,31 @@ async function deleteUserAdmin(username) {
     return prom;
 }
 
+// - - - - - - - - - - Add a new friend - - - - - - - - - - - 
+async function addNewFriend(username, newFriend) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('AddNewFriend', (err, rowCount) => {
+            if (err) {
+                reject("failed AddNewFriend");
+                console.log("err AddNewFriend admin : ", err);
+            }
+        });
+        dbrequest.addParameter('username1', TYPES.NVarChar, username);
+        dbrequest.addParameter('username2', TYPES.NVarChar, newFriend);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed AddNewFriend admin");
+            resolve("success");
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
 // - - - - - - - - - - Select all info about all people with that name - - - - - - - - - - - 
 async function selectPersonAdmin(person) {
     const prom = new Promise(async (resolve, reject) => {
@@ -331,7 +356,6 @@ async function registerNewPersonAdmin(name, avatar, dob) {
     });
     return prom;
 }
-
 
 // - - - - - - - - - - Delete a person from database - - - - - - - - - - - 
 async function deletePersonAdmin(personUuid) {
@@ -790,8 +814,10 @@ async function selectExactAnimeAdmin(anime, user) {
             if (user && user != '') {
                 let personalRating = columns[8].value;
                 let myStatus = columns[9].value;
+                let watchlistAnimeUuid = columns[10].value;
                 myPerson.personalRating = personalRating
                 myPerson.myStatus = myStatus;
+                myPerson.watchlistAnimeUuid = watchlistAnimeUuid;
             }
             people.push(myPerson);
         });
@@ -1748,9 +1774,66 @@ async function addNewWatchlistAnime(user, animeTitle, myStatus, myRating) {
         dbrequest.addParameter('my_status', TYPES.NVarChar, myStatus);
         dbrequest.addParameter('my_rating', TYPES.Int, myRating);
 
+        let entryUuid;
+        dbrequest.on('row', (columns) => {
+            entryUuid = columns[0].value;
+        });
         dbrequest.on('requestCompleted', () => {
             console.log("Request completed AddNewWatchlistAnime admin");
-            resolve("success");
+            resolve(entryUuid);
+        });
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Edit a watchlist anime entry  - - - - - - - - - - - 
+async function updateWatchlistAnime(watchlistAnimeUuid, myStatus, myRating) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+        if (!myRating || myRating == '')
+            myRating = TYPES.Null;
+        if (!myStatus || myStatus == '')
+            myStatus = TYPES.Null;
+
+        const dbrequest = new Request('UpdateWatchlistAnime', (err, rowCount) => {
+            if (err) {
+                reject("failed UpdateWatchlistAnime admin");
+                console.log("err UpdateWatchlistAnime admin : ", err);
+            }
+        });
+        dbrequest.addParameter('uuid', TYPES.UniqueIdentifier, watchlistAnimeUuid);
+        dbrequest.addParameter('my_status', TYPES.NVarChar, myStatus);
+        dbrequest.addParameter('my_rating', TYPES.Int, myRating);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed UpdateWatchlistAnime admin");
+            resolve('edit success');
+        });
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Delete a watchlist anime entry - - - - - - - - - - - 
+async function deleteWatchlistAnime(watchlistAnimeUuid) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('DeleteWatchlistAnime', (err, rowCount) => {
+            if (err) {
+                reject("failed DeleteWatchlistAnime");
+                console.log("err DeleteWatchlistAnime : ", err);
+            }
+        });
+
+        dbrequest.addParameter('uuid', TYPES.UniqueIdentifier, watchlistAnimeUuid);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed DeleteWatchlistAnime");
+            resolve('DeleteWatchlistAnime');
         });
 
         connection.callProcedure(dbrequest);
@@ -1834,6 +1917,8 @@ module.exports = {
     selectUserAdmin: selectUserAdmin,
     deleteUserAdmin: deleteUserAdmin,
 
+    addNewFriend: addNewFriend,
+
     // Person :
     selectPersonAdmin: selectPersonAdmin,
     deletePersonAdmin: deletePersonAdmin,
@@ -1885,6 +1970,8 @@ module.exports = {
     // Watchlist Anime :
     selectUserAnimeWatchlist: selectUserAnimeWatchlist,
     addNewWatchlistAnime: addNewWatchlistAnime,
+    deleteWatchlistAnime: deleteWatchlistAnime,
+    updateWatchlistAnime: updateWatchlistAnime,
 
     // Index :
     selectTopAnimes: selectTopAnimes,

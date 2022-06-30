@@ -8,9 +8,7 @@ html(lang="en")
     +head("Anime Page")
     link(rel="stylesheet" href="./css/animePage.css")
     body 
-        - let navUserName = 'dada da';
-        +navbar(navUserName)
-        //h5 Anime is : #{anime.numberOfComments}
+        +navbar(userName, userRole)
 
         .container.mt-5.top-level-container(data-animeTitle = `${anime.title}`)
             .row.mb-5.pb-3
@@ -33,8 +31,8 @@ html(lang="en")
                                         | &nbsp ✔
                                     -else if(anime.myStatus == 'Currently watching')
                                         | &nbsp 📺
-                                button.btn.float-end.btn-danger.btn-sm.rounded(type='button' onclick='removeToWatchlistAction()') Remove
-                                button.btn.float-end.me-2.btn-primary.btn-sm.rounded(type='button' onclick='editToWatchlistAction()') Edit
+                                button.btn.float-end.btn-danger.btn-sm.rounded(type='button' onclick=`removeFromWatchlistAnimeAction('${anime.watchlistAnimeUuid}')`) Remove
+                                button.btn.float-end.me-2.btn-primary.btn-sm.rounded(type='button' onclick=`editFromWatchlistAnimeAction('${anime.watchlistAnimeUuid}')`) Edit
 
 
 
@@ -94,11 +92,10 @@ html(lang="en")
                             .container-fluid
                                 button.col-2.rounded.btn.btn-primary(type='button' onclick=`location.href = '/${type}/characters/${anime.title}';`) See All Characters
 
-            -let user='user nou';
             .row
                 // Form container
                 .container
-                    if(!user)
+                    if(!userName)
                         div.text-center.mx-auto.my-5
                             h4 You need to be logged in in order to post a comment
                     else
@@ -117,7 +114,7 @@ html(lang="en")
                 .col-12 
                     .reviewsDiv(class=`page${page}`)
                         -for(let i=0; i<10 && i<anime.comments.length; i++)
-                            +mixinComment(anime.comments[i])
+                            +mixinComment(anime.comments[i], userName)
 
             .row.my-5
                 .container

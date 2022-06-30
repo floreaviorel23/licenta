@@ -9,8 +9,7 @@ html(lang="en")
     link(rel="stylesheet" href="./css/genrePage.css")
 
     body
-        - let navUserName = 'dada';
-        +navbar(navUserName)
+        +navbar(userName, userRole)
 
         - genre = genre.charAt(0).toUpperCase() + genre.slice(1)
         .container.mt-3.p-5

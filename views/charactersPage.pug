@@ -7,8 +7,7 @@ html(lang="en")
     +head("Characters Page")
     link(rel="stylesheet" href="./css/animePage.css")
     body 
-        - let navUserName = 'dada da';
-        +navbar(navUserName)
+        +navbar(userName, userRole)
         
         - animeTitle = animeTitle.charAt(0).toUpperCase() + animeTitle.slice(1)
         .container.mt-3.p-5

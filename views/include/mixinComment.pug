@@ -1,6 +1,6 @@
-mixin mixinComment(com)
+mixin mixinComment(com, userName)
     // Comment container
-    -let user='user nou';
+    -let user = userName;
     .container.my-4.py-3(id=`${com.comUuid}`)
         .row
             // Avatar + author name(under)

@@ -45,40 +45,39 @@ app.listen(PORT, () => {
 app.get("/", async (req, res) => {
     console.log("GET Request from /");
     let toSend = {};
-    let username = 'user nou';
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
     try {
-        if (!req.session.userName && 0) {
-            res.status(200);
-            res.redirect('/login');
-        }
-        else {
-            let statistics = {};
+        toSend.userName = userName;
+        toSend.userRole = userRole;
+        let statistics = {};
 
-            let topAnimes = await db.selectTopAnimes();
-            toSend.topAnimes = topAnimes;
+        let topAnimes = await db.selectTopAnimes();
+        toSend.topAnimes = topAnimes;
 
-            let recentAnimes = await db.selectRecentAnimes();
-            toSend.recentAnimes = recentAnimes;
+        let recentAnimes = await db.selectRecentAnimes();
+        toSend.recentAnimes = recentAnimes;
 
-            let recentComments = await db.selectRecentComments();
-            toSend.recentComments = recentComments;
+        let recentComments = await db.selectRecentComments();
+        toSend.recentComments = recentComments;
 
-            let favoriteGenre = await db.selectFavoriteGenre(username);
+        if (userName && userName != '') {
+            let favoriteGenre = await db.selectFavoriteGenre(userName);
             statistics.favoriteGenre = favoriteGenre;
 
-            let numberOfFriends = await db.selectNumberOfFriends(username);
+            let numberOfFriends = await db.selectNumberOfFriends(userName);
             statistics.numberOfFriends = numberOfFriends;
 
-            let numberOfAnimesWatched = await db.selectNumberOfAnimesWatched(username);
+            let numberOfAnimesWatched = await db.selectNumberOfAnimesWatched(userName);
             statistics.numberOfAnimesWatched = numberOfAnimesWatched;
 
-            let numberOfMangasRead = await db.selectNumberOfMangasRead(username);
+            let numberOfMangasRead = await db.selectNumberOfMangasRead(userName);
             statistics.numberOfMangasRead = numberOfMangasRead;
 
             toSend.statistics = statistics;
-            res.status(200);
-            res.render('index', toSend);
         }
+        res.status(200);
+        res.render('index', toSend);
     }
     catch (err) {
         console.log(err);
@@ -100,6 +99,7 @@ app.get("/register", (req, res) => {
 app.get("/logout", (req, res) => {
     if (req.session.userName) {
         req.session.userName = null;
+        req.session.userRole = null;
         res.status(200);
         res.redirect('/');
     }
@@ -111,39 +111,47 @@ app.get("/logout", (req, res) => {
 
 app.get("/profile/:uuid", async (req, res) => {
     console.log("GET Request from profile/uuid");
-    const uuid = req.params.uuid;
-
+    const userProfile = req.params.uuid;
     let toSend = {};
-    let username = 'user nou';
-    toSend.username = username;
+    toSend.userProfile = userProfile;
     try {
-        let statistics = {};
+        if (!req.session.userName) {
+            res.status(200);
+            res.redirect('/login');
+        }
+        else {
+            let userName = req.session.userName;
+            toSend.userName = userName;
+            let userRole = req.session.userRole;
+            toSend.userRole = userRole;
+            let statistics = {};
 
-        let favoriteAnimes = await db.selectFavoriteAnimes(username);
-        toSend.favoriteAnimes = favoriteAnimes;
+            let favoriteAnimes = await db.selectFavoriteAnimes(userProfile);
+            toSend.favoriteAnimes = favoriteAnimes;
 
-        let favoriteMangas = await db.selectFavoriteMangas(username);
-        toSend.favoriteMangas = favoriteMangas;
+            let favoriteMangas = await db.selectFavoriteMangas(userProfile);
+            toSend.favoriteMangas = favoriteMangas;
 
-        let friends = await db.selectAllFriends(username);
-        toSend.friends = friends;
+            let friends = await db.selectAllFriends(userProfile);
+            toSend.friends = friends;
 
-        let favoriteGenre = await db.selectFavoriteGenre(username);
-        statistics.favoriteGenre = favoriteGenre;
+            let favoriteGenre = await db.selectFavoriteGenre(userProfile);
+            statistics.favoriteGenre = favoriteGenre;
 
-        let numberOfFriends = await db.selectNumberOfFriends(username);
-        statistics.numberOfFriends = numberOfFriends;
+            let numberOfFriends = await db.selectNumberOfFriends(userProfile);
+            statistics.numberOfFriends = numberOfFriends;
 
-        let numberOfAnimesWatched = await db.selectNumberOfAnimesWatched(username);
-        statistics.numberOfAnimesWatched = numberOfAnimesWatched;
+            let numberOfAnimesWatched = await db.selectNumberOfAnimesWatched(userProfile);
+            statistics.numberOfAnimesWatched = numberOfAnimesWatched;
 
-        let numberOfMangasRead = await db.selectNumberOfMangasRead(username);
-        statistics.numberOfMangasRead = numberOfMangasRead;
+            let numberOfMangasRead = await db.selectNumberOfMangasRead(userProfile);
+            statistics.numberOfMangasRead = numberOfMangasRead;
 
-        toSend.statistics = statistics;
+            toSend.statistics = statistics;
 
-        res.status(200);
-        res.render("profilePage", toSend);
+            res.status(200);
+            res.render("profilePage", toSend);
+        }
     }
     catch (err) {
         console.log(err);
@@ -152,6 +160,28 @@ app.get("/profile/:uuid", async (req, res) => {
     }
 });
 
+app.post("/profile/add-new-friend", urlencodedParser, async (req, res) => {
+    console.log("POST request from /add-new-friend");
+    const newFriend = req.body.newFriend;
+    let userName = req.session.userName;
+
+    if (userName && userName != '' && newFriend && newFriend != '') {
+        try {
+            let result = await db.addNewFriend(userName, newFriend);
+            res.status(200);
+            res.redirect(`/profile/${userName}`);
+            return;
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).send('Not working D:');
+            return;
+        }
+    }
+    else {
+        res.redirect(`/profile/${userName}`);
+    }
+});
 
 app.post("/login", urlencodedParser, async (req, res) => {
     console.log("POST request from /login");
@@ -160,12 +190,12 @@ app.post("/login", urlencodedParser, async (req, res) => {
         try {
             //Tests if there is an user in database that has the username and pswd
             const user = await db.getUser(username, pswd);
-
             const dbPass = user[0][4].value;
             const validPass = await bcrypt.compare(pswd, dbPass);
 
             if (validPass) {
                 req.session.userName = user[0][2].value; //only 1 row (hence user[0])
+                req.session.userRole = user[0][7].value
                 console.log('User logged : ', req.session.userName);
 
                 res.status(200);

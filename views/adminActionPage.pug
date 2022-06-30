@@ -10,8 +10,7 @@ html(lang="en")
     link(rel="stylesheet" href="./css/adminActionPage.css")
 
     body
-        - let navUserName = 'dada da';
-        +navbar(navUserName)
+        +navbar(userName, userRole)
 
         .container.mx-5.px-5.mt-4
             h1.text-center #{action} #{type}

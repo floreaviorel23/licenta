@@ -114,7 +114,14 @@ function cancelAddToWatchlist() {
     submitDiv = undefined;
 }
 
-
+function removeFromWatchlistAnimeAction(watchlistAnimeUuid) {
+    const xhttp = new XMLHttpRequest();
+    xhttp.onload = function () {
+        location.reload();
+    }
+    xhttp.open("DELETE", `http://localhost:3000/anime/delete-watchlist-anime/${watchlistAnimeUuid}/${animeTitle}`);
+    xhttp.send();
+}
 function showAddCommentForm() {
     const addCommentForm = document.querySelector(".add-comment-form");
 
@@ -141,6 +148,8 @@ function showAddCommentForm() {
 }
 
 
+
+
 function deleteComment(comUuid) {
     const xhttp = new XMLHttpRequest();
     xhttp.onload = function () {
@@ -149,4 +158,47 @@ function deleteComment(comUuid) {
     }
     xhttp.open("DELETE", `http://localhost:3000/anime/delete-comment/${comUuid}/${animeTitle}`);
     xhttp.send();
+}
+
+
+let editHTML;
+function editFromWatchlistAnimeAction(watchlistAnimeUuid) {
+    let editButtonDiv = document.querySelector('.editButtonDiv');
+    editButtonDiv.remove();
+    editHTML = editButtonDiv.innerHTML;
+    //console.log(editHTML);
+    let animeLeftDiv = document.querySelector('.animeLeftDiv');
+
+    let editFromWatchlistDiv = document.createElement('div');
+    animeLeftDiv.appendChild(editFromWatchlistDiv);
+
+    editFromWatchlistDiv.innerHTML = `<div class="editFromWatchlist">
+    <form action="/anime/editFromWatchlistAnime/${watchlistAnimeUuid}/${animeTitle}" class='form-div' method="POST">
+        <div class="mt-3">
+            <label class="form-label" for="status">Status</label>
+            <select class="form-select select-status" onChange="selectedStatusChanged()" name="status">
+                <option value="" disabled selected="selected">Select a status</option>
+                <option value="Completed">Completed</option>
+                <option value="Currently watching">Currently watching</option>
+                <option value="Planning to watch">Planning to watch</option>
+                <option value="Dropped">Dropped</option>
+            </select>
+        </div>
+    </form>
+    <button class="btn btn-sm btn-cancel btn-danger mt-2" onclick="cancelEditFromWatchlistAnime()" type="button">Cancel</button>
+    </div>`;
+}
+
+function cancelEditFromWatchlistAnime() {
+    let editFromWatchlist = document.querySelector('.editFromWatchlist');
+    editFromWatchlist.remove();
+
+    let animeLeftDiv = document.querySelector('.animeLeftDiv');
+    let editDiv = document.createElement('div');
+    animeLeftDiv.appendChild(editDiv);
+
+    editDiv.classList.add('editButtonDiv');
+    editDiv.innerHTML = editHTML;
+    ratingDiv = undefined;
+    submitDiv = undefined;
 }

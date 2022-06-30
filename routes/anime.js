@@ -13,6 +13,11 @@ router.get("/", async (req, res) => {
     const toSend = {};
     toSend.type = 'Anime';
     try {
+        let userName = req.session.userName;
+        let userRole = req.session.userRole;
+        toSend.userName = userName;
+        toSend.userRole = userRole;
+
         let animes = await db.selectAnimesFromEachGenre();
         let genres = await db.selectAllGenres();
 
@@ -41,7 +46,6 @@ router.get("/", async (req, res) => {
                 default:
             }
         }
-
         toSend.actionAnime = actionAnime;
         toSend.comedyAnime = comedyAnime;
         toSend.fantasyAnime = fantasyAnime;
@@ -53,6 +57,7 @@ router.get("/", async (req, res) => {
         res.status(200);
         res.render("animeSearchPage", toSend);
     }
+
     catch (err) {
         console.log(err);
         res.status(500);
@@ -66,8 +71,8 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
     const page = req.params.uuid2;
 
     let toSend = {};
-    //let user = req.session.userName;
-    let user = 'user nou';
+    if (req.session.watchlistAnimeUuid && req.session.watchlistAnimeUuid != '')
+        toSend.watchlistAnimeUuid = req.session.watchlistAnimeUuid;
 
     if (isNaN(page) || page < 1) {
         res.status(400);
@@ -75,61 +80,71 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
     }
 
     try {
-        let anime = await db.selectExactAnimeAdmin(animeTitle, user);
-        //console.log(anime);
-        if (anime.length == 1 && anime[0].title == animeTitle) {
-            //console.log(anime[0]);
-
-            toSend.type = 'anime';
-            toSend.page = page;
-            if (anime[0].author == null || anime[0].author == '') {
-                anime[0].author = 'N/A';
-            }
-            else {
-                try {
-                    let authorName = await db.getAuthorsName(anime[0].author);
-                    anime[0].author = authorName;
-                }
-                catch {
-                    console.log('No author found');
-                }
-            }
-
-            let genres;
-            try {
-                genres = await db.selectAnimeGenres(anime[0].uuid);
-                anime[0].genres = genres;
-            }
-            catch {
-                console.log('Genres catch');
-            }
-
-            let characters;
-            try {
-                characters = await db.selectAnimeCharacters(anime[0].title);
-                anime[0].characters = characters;
-            }
-            catch {
-                console.log('Characters catch');
-            }
-
-            let comments;
-            try {
-                comments = await db.selectAnimeComments(anime[0].uuid, page);
-                anime[0].comments = comments;
-            }
-            catch {
-                console.log('Characters catch');
-            }
-            //console.log(anime[0].comments);
-            toSend.anime = anime[0];
+        if (!req.session.userName) {
             res.status(200);
-            res.render("animePage", toSend);
+            res.redirect('/login');
         }
         else {
-            res.status(400);
-            res.send("Page not existing");
-            return;
+            let userName = req.session.userName;
+            toSend.userName = userName;
+            let userRole = req.session.userRole;
+            toSend.userRole = userRole;
+            let anime = await db.selectExactAnimeAdmin(animeTitle, userName);
+            //console.log(anime);
+            if (anime.length == 1 && anime[0].title == animeTitle) {
+                console.log(anime[0]);
+
+                toSend.type = 'anime';
+                toSend.page = page;
+                if (anime[0].author == null || anime[0].author == '') {
+                    anime[0].author = 'N/A';
+                }
+                else {
+                    try {
+                        let authorName = await db.getAuthorsName(anime[0].author);
+                        anime[0].author = authorName;
+                    }
+                    catch {
+                        console.log('No author found');
+                    }
+                }
+
+                let genres;
+                try {
+                    genres = await db.selectAnimeGenres(anime[0].uuid);
+                    anime[0].genres = genres;
+                }
+                catch {
+                    console.log('Genres catch');
+                }
+
+                let characters;
+                try {
+                    characters = await db.selectAnimeCharacters(anime[0].title);
+                    anime[0].characters = characters;
+                }
+                catch {
+                    console.log('Characters catch');
+                }
+
+                let comments;
+                try {
+                    comments = await db.selectAnimeComments(anime[0].uuid, page);
+                    anime[0].comments = comments;
+                }
+                catch {
+                    console.log('Characters catch');
+                }
+                //console.log(anime[0].comments);
+                toSend.anime = anime[0];
+                res.status(200);
+                res.render("animePage", toSend);
+            }
+            else {
+                res.status(400);
+                res.send("Page not existing");
+                return;
+            }
         }
     }
     catch (err) {
@@ -146,16 +161,52 @@ router.post("/addToWatchlist/:uuid", urlencodedParser, async (req, res) => {
     console.log("POST request from /anime/addToWatchlist/:uuid");
     const animeTitle = req.params.uuid;
     const [myStatus, myRating] = [req.body.status, req.body.rating];
-    //console.log(myStatus, myRating);
-    //let user = req.session.userName;
-    let user = 'user nou';
-    if (user && user != '' && myStatus && myStatus != '' && animeTitle && animeTitle != '') {
-        try {
-            const result = await db.addNewWatchlistAnime(user, animeTitle, myStatus, myRating);
 
-            res.status(200);
-            res.redirect(`/anime/${animeTitle}/page/1`);
+    if (myStatus && myStatus != '' && animeTitle && animeTitle != '') {
+        try {
+            if (!req.session.userName) {
+                res.status(200);
+                res.redirect('/login');
+            }
+            else {
+                let userName = req.session.userName;
+                const result = await db.addNewWatchlistAnime(userName, animeTitle, myStatus, myRating);
+                res.status(200);
+                res.redirect(`/anime/${animeTitle}/page/1`);
+                return;
+            }
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).send('Error database');
             return;
+        }
+    }
+    else {
+        res.status(400).send('Error list of parameters');
+        return;
+    }
+});
+
+router.post("/editFromWatchlistAnime/:uuid/:uuid2", urlencodedParser, async (req, res) => {
+    console.log("POST request from /editFromWatchlistAnime/:uuid/:uuid2");
+    const watchlistAnimeUuid = req.params.uuid;
+    const animeTitle = req.params.uuid2;
+    const [myStatus, myRating] = [req.body.status, req.body.rating];
+
+    if (myStatus && myStatus != '' && animeTitle && animeTitle != '' && watchlistAnimeUuid && watchlistAnimeUuid) {
+        try {
+            if (!req.session.userName) {
+                res.status(200);
+                res.redirect('/login');
+            }
+            else {
+                let userName = req.session.userName;
+                const result = await db.updateWatchlistAnime(watchlistAnimeUuid, myStatus, myRating);
+                res.status(200);
+                res.redirect(`/anime/${animeTitle}/page/1`);
+                return;
+            }
         }
         catch (err) {
             console.log(err);
@@ -175,16 +226,21 @@ router.post("/add-new-comment/:uuid", urlencodedParser, async (req, res) => {
 
     let myComment = req.body.message;
     //myComment = escapeRegExp(myComment);
-    console.log(myComment);
 
-    let user = 'user nou';
-    if (user && user != '' && myComment && myComment != '' && animeTitle && animeTitle != '') {
+    if (myComment && myComment != '' && animeTitle && animeTitle != '') {
         try {
-            const result = await db.addNewCommentAnime(user, animeTitle, myComment);
+            if (!req.session.userName) {
+                res.status(200);
+                res.redirect('/login');
+            }
+            else {
+                let userName = req.session.userName;
+                const result = await db.addNewCommentAnime(userName, animeTitle, myComment);
 
-            res.status(200);
-            res.redirect(`/anime/${animeTitle}/page/1`);
-            return;
+                res.status(200);
+                res.redirect(`/anime/${animeTitle}/page/1`);
+                return;
+            }
         }
         catch (err) {
             console.log(err);
@@ -207,14 +263,54 @@ router.delete("/delete-comment/:uuid/:uuid2", urlencodedParser, async (req, res)
 
     console.log(comUuid, animeTitle);
 
-    let user = 'user nou';
-    if (user && user != '' && comUuid && comUuid != '' && animeTitle && animeTitle != '') {
+    if (comUuid && comUuid != '' && animeTitle && animeTitle != '') {
         try {
-            const result = await db.deleteCommentAnime(comUuid);
+            if (!req.session.userName) {
+                res.status(200);
+                res.redirect('/login');
+            }
+            else {
+                let userName = req.session.userName;
+                const result = await db.deleteCommentAnime(comUuid);
 
-            res.status(200);
-            res.redirect(`/anime/${animeTitle}/page/1`);
+                res.status(200);
+                res.redirect(`/anime/${animeTitle}/page/1`);
+                return;
+            }
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).send('Error database');
             return;
+        }
+    }
+    else {
+        res.status(400).send('Error list of parameters');
+        return;
+    }
+});
+
+router.delete("/delete-watchlist-anime/:uuid/:uuid2", urlencodedParser, async (req, res) => {
+    console.log("Delete request from /delete-watchlist-anime/:uuid/:uuid2");
+
+    let watchlistAnimeUuid = req.params.uuid;
+    let animeTitle = req.params.uuid2;
+    //console.log(watchlistAnimeUuid, animeTitle);
+
+
+    if (watchlistAnimeUuid && watchlistAnimeUuid != '' && animeTitle && animeTitle != '') {
+        try {
+            if (!req.session.userName) {
+                res.status(200);
+                res.redirect('/login');
+            }
+            else {
+                let userName = req.session.userName;
+                const result = await db.deleteWatchlistAnime(watchlistAnimeUuid);
+                res.status(200);
+                res.redirect(`/anime/${animeTitle}/page/1`);
+                return;
+            }
         }
         catch (err) {
             console.log(err);
@@ -230,17 +326,28 @@ router.delete("/delete-comment/:uuid/:uuid2", urlencodedParser, async (req, res)
 
 router.get("/watchlist/:uuid", async (req, res) => {
     console.log("GET Request from anime/watchlist/uuid");
-    const uuid = req.params.uuid;
+    const userProfile = req.params.uuid;
 
     let toSend = {};
-    toSend.username = uuid;
+    toSend.userProfile = userProfile;
 
     try {
-        let rows = await db.selectUserAnimeWatchlist(uuid);
-        //console.log(rows);
-        toSend.rows = rows;
-        res.status(200);
-        res.render("animeListPage", toSend);
+        if (!req.session.userName) {
+            res.status(200);
+            res.redirect('/login');
+        }
+        else {
+            let userName = req.session.userName;
+            let userRole = req.session.userRole;
+            toSend.userName = userName;
+            toSend.userRole = userRole;
+
+            let rows = await db.selectUserAnimeWatchlist(userProfile);
+            //console.log(rows);
+            toSend.rows = rows;
+            res.status(200);
+            res.render("animeListPage", toSend);
+        }
     }
     catch (err) {
         console.log(err);
@@ -257,14 +364,24 @@ router.get("/genre/:uuid", async (req, res) => {
     toSend.type = 'Anime';
     toSend.genre = genreName;
 
-
     if (genreName && genreName != '')
         try {
-            let animes = await db.selectAllAnimesFromGenre(genreName)
-            toSend.animes = animes;
-            console.log(toSend);
-            res.status(200);
-            res.render("genrePage", toSend);
+            if (!req.session.userName) {
+                res.status(200);
+                res.redirect('/login');
+            }
+            else {
+                let userName = req.session.userName;
+                let userRole = req.session.userRole;
+                toSend.userName = userName;
+                toSend.userRole = userRole;
+
+                let animes = await db.selectAllAnimesFromGenre(genreName)
+                toSend.animes = animes;
+                console.log(toSend);
+                res.status(200);
+                res.render("genrePage", toSend);
+            }
         }
         catch (err) {
             console.log(err);
@@ -283,11 +400,22 @@ router.get("/characters/:uuid", async (req, res) => {
 
     let characters;
     try {
-        characters = await db.selectAnimeCharacters(animeTitle);
-        toSend.characters = characters;
+        if (!req.session.userName) {
+            res.status(200);
+            res.redirect('/login');
+        }
+        else {
+            let userName = req.session.userName;
+            let userRole = req.session.userRole;
+            toSend.userName = userName;
+            toSend.userRole = userRole;
 
-        res.status(200);
-        res.render("charactersPage", toSend);
+            characters = await db.selectAnimeCharacters(animeTitle);
+            toSend.characters = characters;
+
+            res.status(200);
+            res.render("charactersPage", toSend);
+        }
     }
     catch (err) {
         console.log(err);

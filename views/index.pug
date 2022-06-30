@@ -8,12 +8,11 @@ doctype html
 html(lang="en")
     +head('Fan Anime Manga')
     body 
-       
-        +navbar('dada')
-        
+
+        +navbar(userName, userRole)
+
         - const anime = {};
         - anime.imgPath = './images/Naruto.jpg';
-        - anime.title = 'Naruto';
 
         .container 
             .row
@@ -50,7 +49,7 @@ html(lang="en")
                                                     -for(let i=8; i<12; i++)
                                                         -topAnimes[i].imgPath = './images/Naruto.jpg';
                                                         +mixinAnimeCard(topAnimes[i])
-                                                    
+
                                     // Left and right controls
                                     a.left.carousel-control.rounded-2(href='#myAnimeCarousel' data-slide='prev')
                                         .container-fluid.left-button
@@ -105,7 +104,7 @@ html(lang="en")
                                                     +mixinAnimeCard(anime)
                                                     +mixinAnimeCard(anime)
                                                     +mixinAnimeCard(anime)
-                                                    
+
                                     // Left and right controls
                                     a.left.carousel-control.rounded-2(href='#myMangaCarousel' data-slide='prev')
                                         .container-fluid.left-button
@@ -135,8 +134,8 @@ html(lang="en")
                                     each anime in recentAnimes
                                         -anime.imgPath = './images/Naruto.jpg';
                                         +mixinAnimeCard(anime)
-                                    
-                    
+
+
                     .row
                         .col-12  
                             .container-fluid.mt-5
@@ -151,10 +150,11 @@ html(lang="en")
                 // - - - - - - - - - - Sidebar - - - - - - - - - - - - - - -
                 .col-4
                     // Statistics
-                    .row
-                        .col-12
-                            .container-fluid.my-5.statistics.py-4
-                                +statistics(statistics)
+                    -if(userName && userName!= '')
+                        .row
+                            .col-12
+                                .container-fluid.my-5.statistics.py-4
+                                    +statistics(statistics)
                     .row.mt-5
                         .col-12 
                             .container-fluid.recent-reviews-div.rounded
@@ -162,9 +162,9 @@ html(lang="en")
                                 hr
                                 each comment in recentComments
                                     +mixinRecentComment(comment)
-                    
-    
-        
+
+
+
         script(src="js/index.js")
 
 

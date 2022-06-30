@@ -8,40 +8,40 @@ doctype html
 html(lang="en")
     +head("Profile Page")
     link(rel="stylesheet" href="./css/profilePage.css")
-    
+
     body
-        - let navUserName = 'dada da';
-        +navbar(navUserName)
+        +navbar(userName, userRole)
 
         .container.mt-5.py-3
             .row
                 .col-3
                     .div.d-flex.justify-content-center.profile-image-div
                         img.pfp.rounded(src='images/hmm.jpg')
-                    .div.ms-4.ps-3.mt-3
-                        button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button"  onclick=`location.href = '/anime/watchlist/${username}';` class="" aria-label="Edit") Anime Watchlist 
-                    .div.ms-4.ps-3.mt-2
-                        button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button" onclick=`location.href = '/manga/watchlist/${username}';` class="" aria-label="Edit") Manga Watchlist 
-               
-                .col-3.d-flex.align-content-center
-                    .container-fluid
-                        .row 
-                            h1 #{username}
-                        .row
-                            h6 Joined 28 May 2022
-                        .row.mt-3
+                    -if(userName == userProfile)                    
+                        .div.ms-4.ps-3.mt-3
                             button.btn.btn-primary.btn-edit.rounded.editDiv(type="button" class="" aria-label="Edit") Edit Profile 
                                 svg.ms-3(xmlns='http://www.w3.org/2000/svg' aria-hidden='true' role='img' width='1em' height='1em' preserveaspectratio='xMidYMid meet' viewbox='0 0 36 36')
                                     path.clr-i-outline.clr-i-outline-path-1(fill='currentColor' d='M33.87 8.32L28 2.42a2.07 2.07 0 0 0-2.92 0L4.27 23.2l-1.9 8.2a2.06 2.06 0 0 0 2 2.5a2.14 2.14 0 0 0 .43 0l8.29-1.9l20.78-20.76a2.07 2.07 0 0 0 0-2.92ZM12.09 30.2l-7.77 1.63l1.77-7.62L21.66 8.7l6 6ZM29 13.25l-6-6l3.48-3.46l5.9 6Z')
                                     path(fill='none' d='M0 0h36v36H0z')
-                        .row.mt-3
-                            button.btn.btn-info.btn-edit.rounded.editDiv(type="button" class="" aria-label="Edit") Add Friend
+                        .div.ms-4.ps-3.mt-2.addFriendDiv
+                            button.btn.btn-info.btn-edit.rounded.editDiv(type="button" class="" onclick=`addNewFriend('${userName}')` aria-label="Edit") Add Friend
                                 svg.ms-3.icon.icon-tabler.icon-tabler-friends(xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewbox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round')
                                     path(stroke='none' d='M0 0h24v24H0z' fill='none')
                                     circle(cx='7' cy='5' r='2')
                                     path(d='M5 22v-5l-1 -1v-4a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4l-1 1v5')
                                     circle(cx='17' cy='5' r='2')
                                     path(d='M15 22v-4h-2l2 -6a1 1 0 0 1 1 -1h2a1 1 0 0 1 1 1l2 6h-2v4')
+
+                .col-3.d-flex.align-content-center
+                    .container-fluid
+                        .row 
+                            h1 #{userProfile}
+                        .row
+                            h6 Joined 28 May 2022           
+                        .row.mt-3
+                            button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button"  onclick=`location.href = '/anime/watchlist/${userName}';` class="" aria-label="Edit") Anime Watchlist 
+                        .row.mt-3
+                            button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button" onclick=`location.href = '/manga/watchlist/${userName}';` class="" aria-label="Edit") Manga Watchlist 
 
                 .col-1
                 .col-4
@@ -58,7 +58,7 @@ html(lang="en")
                         .row
                             .col-12.title
                                 h1 #{genre} #{type}
-                        
+
                         - const anime = {};
                         - anime.imgPath = './images/Naruto.jpg';
                         - anime.title = 'Naruto';
@@ -87,3 +87,5 @@ html(lang="en")
                         span.me-4
                             a(href=`/profile/${friend.friendName}`).text-decoration-none
                                 span #{friend.friendName}
+
+        script(src="./js/profilePage.js") 

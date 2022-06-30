@@ -9,11 +9,29 @@ require('dotenv').config();
 const db = require('../dbFunctions');
 
 router.get("/", async (req, res) => {
+    let toSend = {};
     console.log("GET Request from admin");
-
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+    toSend.userName = userName;
+    toSend.userRole = userRole;
     try {
-        res.status(200);
-        res.render("adminPage");
+        if (!userName || userName == '') {
+            res.status(200);
+            res.redirect('/login');
+            return;
+        }
+        else {
+            if (!userRole || userRole != 'Admin') {
+                res.status(200);
+                res.redirect('/');
+                return;
+            }
+            else {
+                res.status(200);
+                res.render("adminPage", toSend);
+            }
+        }
     }
     catch (err) {
         console.log(err);
@@ -23,13 +41,34 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/action/select/:uuid", async (req, res) => {
+    let toSend = {};
     console.log("GET Request from admin/action/select/uuid");
     const uuid = req.params.uuid;
-
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+    toSend.userName = userName;
+    toSend.userRole = userRole;
+    toSend.action = 'Select';
+    toSend.type = uuid;
     try {
-        console.log("type : " + uuid);
-        res.status(200);
-        res.render("adminActionPage", { type: uuid, action: 'Select' });
+        if (!userName) {
+            res.status(200);
+            res.redirect('/login');
+            return;
+        }
+        else {
+            if (!userRole || userRole != 'Admin') {
+                res.status(200);
+                res.redirect('/');
+                return;
+            }
+            else {
+                console.log("type : " + uuid);
+                res.status(200);
+                res.render("adminActionPage", toSend);
+                return;
+            }
+        }
     }
     catch (err) {
         console.log(err);
@@ -39,13 +78,34 @@ router.get("/action/select/:uuid", async (req, res) => {
 });
 
 router.get("/action/add/:uuid", async (req, res) => {
+    let toSend = {};
     console.log("GET Request from admin/action/add/uuid");
     const uuid = req.params.uuid;
-
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+    toSend.userName = userName;
+    toSend.userRole = userRole;
+    toSend.action = 'Add';
+    toSend.type = uuid;
     try {
-        console.log("type : " + uuid);
-        res.status(200);
-        res.render("adminActionPage", { type: uuid, action: 'Add' });
+        if (!userName) {
+            res.status(200);
+            res.redirect('/login');
+            return;
+        }
+        else {
+            if (!userRole || userRole != 'Admin') {
+                res.status(200);
+                res.redirect('/');
+                return;
+            }
+            else {
+                console.log("type : " + uuid);
+                res.status(200);
+                res.render("adminActionPage", toSend);
+                return;
+            }
+        }
     }
     catch (err) {
         console.log(err);
@@ -55,13 +115,34 @@ router.get("/action/add/:uuid", async (req, res) => {
 });
 
 router.get("/action/edit/:uuid", async (req, res) => {
+    let toSend = {};
     console.log("GET Request admin/action/edit/uuid");
     const uuid = req.params.uuid;
-
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+    toSend.userName = userName;
+    toSend.userRole = userRole;
+    toSend.action = 'Edit';
+    toSend.type = uuid;
     try {
-        console.log("type : " + uuid);
-        res.status(200);
-        res.render("adminActionPage", { type: uuid, action: 'Edit' });
+        if (!userName) {
+            res.status(200);
+            res.redirect('/login');
+            return;
+        }
+        else {
+            if (!userRole || userRole != 'Admin') {
+                res.status(200);
+                res.redirect('/');
+                return;
+            }
+            else {
+                console.log("type : " + uuid);
+                res.status(200);
+                res.render("adminActionPage", toSend);
+                return;
+            }
+        }
     }
     catch (err) {
         console.log(err);
@@ -71,13 +152,34 @@ router.get("/action/edit/:uuid", async (req, res) => {
 });
 
 router.get("/action/delete/:uuid", async (req, res) => {
+    let toSend = {};
     console.log("GET Request from admin/action/delete/uuid");
     const uuid = req.params.uuid;
-
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+    toSend.userName = userName;
+    toSend.userRole = userRole;
+    toSend.action = 'Delete';
+    toSend.type = uuid;
     try {
-        console.log("type : " + uuid);
-        res.status(200);
-        res.render("adminActionPage", { type: uuid, action: 'Delete' });
+        if (!userName) {
+            res.status(200);
+            res.redirect('/login');
+            return;
+        }
+        else {
+            if (!userRole || userRole != 'Admin') {
+                res.status(200);
+                res.redirect('/');
+                return;
+            }
+            else {
+                console.log("type : " + uuid);
+                res.status(200);
+                res.render("adminActionPage", toSend);
+                return;
+            }
+        }
     }
     catch (err) {
         console.log(err);
@@ -94,6 +196,14 @@ router.get("/action/delete/:uuid", async (req, res) => {
 router.post("/action/add/:uuid", urlencodedParser, async (req, res) => {
     console.log("POST request from /admin/action/add/:uuid");
     const uuid = req.params.uuid;
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+
+    if (!userName || !userRole || userRole != 'Admin') {
+        res.status(400);
+        res.send('Not allowed!!!');
+        return;
+    }
 
     if (uuid == 'User') {
         const [username, email, pswd, avatar, dob, role] = [req.body.username, req.body.email, req.body.pswd, req.body.avatar, req.body.dob, req.body.role];
@@ -157,7 +267,6 @@ router.post("/action/add/:uuid", urlencodedParser, async (req, res) => {
             res.redirect(`/admin/action/add/${uuid}`);
         }
     }
-
 
     if (uuid == 'Voice Actor') {
         const [personUuid] = [req.body.personUuid];
@@ -310,6 +419,14 @@ router.post("/action/edit/:uuid", urlencodedParser, async (req, res) => {
     console.log("POST request from /admin/action/edit/:uuid");
     const uuid = req.params.uuid;
 
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+    if (!userName || !userRole || userRole != 'Admin') {
+        res.status(400);
+        res.send('Not allowed!!!');
+        return;
+    }
+
     if (uuid == 'User') {
         const [username, pswd, role] = [req.body.username, req.body.pswd, req.body.role];
         if (username) {
@@ -441,6 +558,14 @@ router.post("/action/edit/:uuid", urlencodedParser, async (req, res) => {
 router.post("/action/select/:uuid", urlencodedParser, async (req, res) => {
     const uuid = req.params.uuid;
     console.log(`POST request from /admin/action/select/${uuid}`);
+
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+    if (!userName || !userRole || userRole != 'Admin') {
+        res.status(400);
+        res.send('Not allowed!!!');
+        return;
+    }
 
     let results = {};
     let messageFail = 'No match found';
@@ -598,6 +723,14 @@ router.post("/action/select/:uuid", urlencodedParser, async (req, res) => {
 
 router.post("/action/delete/:uuid", urlencodedParser, async (req, res) => {
     console.log("DELETE request from /admin/action/delete/:uuid");
+
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+    if (!userName || !userRole || userRole != 'Admin') {
+        res.status(400);
+        res.send('Not allowed!!!');
+        return;
+    }
 
     const uuid = req.params.uuid;
     let message;
