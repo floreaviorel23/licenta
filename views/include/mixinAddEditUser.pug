@@ -1,6 +1,6 @@
 mixin mixinAddEditUser(action, type)
     div
-        form(action=`/admin/action/${action}/${type}`, method="POST")
+        form(action=`/admin/action/${action}/${type}` method="POST" enctype="multipart/form-data")
 
 
             -if(type == 'User')
@@ -17,7 +17,7 @@ mixin mixinAddEditUser(action, type)
                 -if(action == 'Add')
                     .mb-3
                         label.form-label(for="avatar") Avatar
-                        input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                        input#username.form-control.border.rounded.border-1(type="file" name="avatar")
                     .mb-3
                         label.form-label(for='dateOfBirth') Date of Birth
                         input.mb-3.form-control#dateField(type="date" name='dob' max="2017-12-31" placeholder="DoB")

@@ -1,8 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
-const cors = require('cors');
-const session = require('express-session');
 const router = express.Router();
 require('dotenv').config();
 
@@ -157,7 +153,7 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
 });
 
 
-router.post("/addToWatchlist/:uuid", urlencodedParser, async (req, res) => {
+router.post("/addToWatchlist/:uuid", async (req, res) => {
     console.log("POST request from /anime/addToWatchlist/:uuid");
     const animeTitle = req.params.uuid;
     const [myStatus, myRating] = [req.body.status, req.body.rating];
@@ -188,7 +184,7 @@ router.post("/addToWatchlist/:uuid", urlencodedParser, async (req, res) => {
     }
 });
 
-router.post("/editFromWatchlistAnime/:uuid/:uuid2", urlencodedParser, async (req, res) => {
+router.post("/editFromWatchlistAnime/:uuid/:uuid2", async (req, res) => {
     console.log("POST request from /editFromWatchlistAnime/:uuid/:uuid2");
     const watchlistAnimeUuid = req.params.uuid;
     const animeTitle = req.params.uuid2;
@@ -220,7 +216,7 @@ router.post("/editFromWatchlistAnime/:uuid/:uuid2", urlencodedParser, async (req
     }
 });
 
-router.post("/add-new-comment/:uuid", urlencodedParser, async (req, res) => {
+router.post("/add-new-comment/:uuid", async (req, res) => {
     console.log("POST request from /add-new-comment/:uuid");
     const animeTitle = req.params.uuid;
 
@@ -255,7 +251,7 @@ router.post("/add-new-comment/:uuid", urlencodedParser, async (req, res) => {
 });
 
 
-router.delete("/delete-comment/:uuid/:uuid2", urlencodedParser, async (req, res) => {
+router.delete("/delete-comment/:uuid/:uuid2", async (req, res) => {
     console.log("Delete request from /delete-comment/:uuid/:uuid2");
 
     let comUuid = req.params.uuid;
@@ -290,7 +286,7 @@ router.delete("/delete-comment/:uuid/:uuid2", urlencodedParser, async (req, res)
     }
 });
 
-router.delete("/delete-watchlist-anime/:uuid/:uuid2", urlencodedParser, async (req, res) => {
+router.delete("/delete-watchlist-anime/:uuid/:uuid2", async (req, res) => {
     console.log("Delete request from /delete-watchlist-anime/:uuid/:uuid2");
 
     let watchlistAnimeUuid = req.params.uuid;

@@ -15,4 +15,7 @@ mixin statistics()
                 td(colspan='2') #{statistics.numberOfFriends}
             tr
                 th(scope='row') Favorite genre
-                td(colspan='2') #{statistics.favoriteGenre.genreName}
+                -if(statistics.favoriteGenre && statistics.favoriteGenre.genreName)
+                    td(colspan='2') #{statistics.favoriteGenre.genreName}
+                -else
+                    td(colspan='2') -

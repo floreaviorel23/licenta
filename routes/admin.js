@@ -1,12 +1,34 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
-const cors = require('cors');
-const session = require('express-session');
 const router = express.Router();
+const path = require('path');
+const multer = require('multer')
+const upload = multer({ dest: 'public/uploads/', limits: { fileSize: 5 * (10 ** 6) } }); //5 MB
 require('dotenv').config();
 
 const db = require('../dbFunctions');
+
+router.use((req, res, next) => {
+    let userName = req.session.userName;
+    let userRole = req.session.userRole;
+    if (!userName) {
+        res.status(200);
+        console.log('middleware');
+        res.redirect('/login');
+        return;
+    }
+    else {
+        if (!userRole || userRole != 'Admin') {
+            res.status(200);
+            console.log('middleware');
+            res.redirect('/');
+            return;
+        }
+        else {
+            console.log('middleware');
+            next();
+        }
+    }
+})
 
 router.get("/", async (req, res) => {
     let toSend = {};
@@ -193,8 +215,10 @@ router.get("/action/delete/:uuid", async (req, res) => {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-router.post("/action/add/:uuid", urlencodedParser, async (req, res) => {
+router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
     console.log("POST request from /admin/action/add/:uuid");
+    console.log('image : ', req.file);
+
     const uuid = req.params.uuid;
     let userName = req.session.userName;
     let userRole = req.session.userRole;
@@ -206,8 +230,9 @@ router.post("/action/add/:uuid", urlencodedParser, async (req, res) => {
     }
 
     if (uuid == 'User') {
-        const [username, email, pswd, avatar, dob, role] = [req.body.username, req.body.email, req.body.pswd, req.body.avatar, req.body.dob, req.body.role];
+        const [username, email, pswd, dob, role, imgPathRaw] = [req.body.username, req.body.email, req.body.pswd, req.body.dob, req.body.role, req.file.path];
         //console.log(`Username : ${username}, email : ${email}, pswd : ${pswd}, avatar : ${avatar}, dob : ${dob}, role : ${role}`);
+        const avatar = path.normalize(imgPathRaw.replace('public', '.'));
 
         if (username && pswd && email) {
             try {
@@ -415,7 +440,7 @@ router.post("/action/add/:uuid", urlencodedParser, async (req, res) => {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-router.post("/action/edit/:uuid", urlencodedParser, async (req, res) => {
+router.post("/action/edit/:uuid", upload.single("avatar"), async (req, res) => {
     console.log("POST request from /admin/action/edit/:uuid");
     const uuid = req.params.uuid;
 
@@ -429,6 +454,8 @@ router.post("/action/edit/:uuid", urlencodedParser, async (req, res) => {
 
     if (uuid == 'User') {
         const [username, pswd, role] = [req.body.username, req.body.pswd, req.body.role];
+        console.log('Edit user');
+        console.log(username, pswd, role);
         if (username) {
             if (pswd) {
                 try {
@@ -442,6 +469,7 @@ router.post("/action/edit/:uuid", urlencodedParser, async (req, res) => {
             }
             if (role) {
                 try {
+                    console.log('role : ', role);
                     await db.updateUserRole(username, role);
                 }
                 catch (err) {
@@ -555,7 +583,7 @@ router.post("/action/edit/:uuid", urlencodedParser, async (req, res) => {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-router.post("/action/select/:uuid", urlencodedParser, async (req, res) => {
+router.post("/action/select/:uuid", async (req, res) => {
     const uuid = req.params.uuid;
     console.log(`POST request from /admin/action/select/${uuid}`);
 
@@ -721,7 +749,7 @@ router.post("/action/select/:uuid", urlencodedParser, async (req, res) => {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-router.post("/action/delete/:uuid", urlencodedParser, async (req, res) => {
+router.post("/action/delete/:uuid", async (req, res) => {
     console.log("DELETE request from /admin/action/delete/:uuid");
 
     let userName = req.session.userName;

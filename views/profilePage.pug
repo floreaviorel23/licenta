@@ -16,7 +16,10 @@ html(lang="en")
             .row
                 .col-3
                     .div.d-flex.justify-content-center.profile-image-div
-                        img.pfp.rounded(src='images/hmm.jpg')
+                        -if(userInfo.avatar && userInfo.avatar!= '')
+                            img.pfp.rounded(src=`${userInfo.avatar}`)
+                        -else
+                            img.pfp.rounded(src='./images/hmm.jpg')
                     -if(userName == userProfile)                    
                         .div.ms-4.ps-3.mt-3
                             button.btn.btn-primary.btn-edit.rounded.editDiv(type="button" class="" aria-label="Edit") Edit Profile 

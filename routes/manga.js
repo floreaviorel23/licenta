@@ -1,8 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
-const cors = require('cors');
-const session = require('express-session');
 const router = express.Router();
 require('dotenv').config();
 

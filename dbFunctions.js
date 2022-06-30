@@ -79,7 +79,7 @@ async function registerNewUser(username, email, pswd) {
         console.log("Pass is : " + pswd + "\nlength is : " + pswd.length);
         console.log("Hashed pass is : ", hashPassword);
 
-        let sql = `exec AddNewUser_licenta "${username}", "${email}", "${hashPassword}", NULL, NULL, "noob"`;
+        let sql = `exec AddNewUser_licenta "${username}", "${email}", "${hashPassword}", NULL, NULL, "User"`;
 
         let Request = require('tedious').Request;
         const dbrequest = new Request(sql, (err, rowCount) => {
@@ -229,6 +229,42 @@ async function selectUserAdmin(username) {
         dbrequest.on('requestCompleted', () => {
             console.log("Request completed select user admin");
             resolve(users);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select all info about a single user - - - - - - - - - - - 
+async function selectSingleUserAdmin(username) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('ReadSingleUser', (err, rowCount) => {
+            if (err) {
+                reject("failed ReadSingleUser");
+                console.log("err ReadSingleUser : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+
+        let user = {};
+        dbrequest.on('row', (columns) => {
+            let [id, uuid, username, email, pass, avatar, dob, role, createdAt] =
+                [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value, columns[6].value, columns[7].value, columns[8].value];
+            if (dob) {
+                dob = sqlToJsDate(dob);
+            }
+            createdAt = sqlToJsDate(createdAt);
+            user = { id, uuid, username, email, pass, avatar, dob, role, createdAt };
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed ReadSingleUser");
+            resolve(user);
         });
 
         connection.callProcedure(dbrequest);
@@ -1916,6 +1952,7 @@ module.exports = {
     updateUserRole: updateUserRole,
     selectUserAdmin: selectUserAdmin,
     deleteUserAdmin: deleteUserAdmin,
+    selectSingleUserAdmin: selectSingleUserAdmin,
 
     addNewFriend: addNewFriend,
 

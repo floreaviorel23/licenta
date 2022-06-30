@@ -1,16 +1,16 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const path = require('path');
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const cors = require('cors');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
+const multer  = require('multer');
 require('dotenv').config();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -47,9 +47,11 @@ app.get("/", async (req, res) => {
     let toSend = {};
     let userName = req.session.userName;
     let userRole = req.session.userRole;
+    let userAvatar = req.session.avatar;
     try {
         toSend.userName = userName;
         toSend.userRole = userRole;
+        toSend.userAvatar = userAvatar;
         let statistics = {};
 
         let topAnimes = await db.selectTopAnimes();
@@ -126,6 +128,10 @@ app.get("/profile/:uuid", async (req, res) => {
             toSend.userRole = userRole;
             let statistics = {};
 
+            let userInfo = await db.selectSingleUserAdmin(userProfile);
+            console.log(userInfo);
+            toSend.userInfo = {'username':userInfo.username, 'dob':userInfo.dob, 'createdAt':userInfo.createdAt, 'avatar':userInfo.avatar};
+
             let favoriteAnimes = await db.selectFavoriteAnimes(userProfile);
             toSend.favoriteAnimes = favoriteAnimes;
 
@@ -148,7 +154,7 @@ app.get("/profile/:uuid", async (req, res) => {
             statistics.numberOfMangasRead = numberOfMangasRead;
 
             toSend.statistics = statistics;
-
+            console.log(toSend);
             res.status(200);
             res.render("profilePage", toSend);
         }
@@ -160,7 +166,7 @@ app.get("/profile/:uuid", async (req, res) => {
     }
 });
 
-app.post("/profile/add-new-friend", urlencodedParser, async (req, res) => {
+app.post("/profile/add-new-friend", async (req, res) => {
     console.log("POST request from /add-new-friend");
     const newFriend = req.body.newFriend;
     let userName = req.session.userName;
@@ -183,9 +189,10 @@ app.post("/profile/add-new-friend", urlencodedParser, async (req, res) => {
     }
 });
 
-app.post("/login", urlencodedParser, async (req, res) => {
+app.post("/login", async (req, res) => {
     console.log("POST request from /login");
-    const [username, pswd] = [req.body.username, req.body.pswd];
+    const username = req.body.username;
+    const pswd = req.body.pswd;
     if (username && pswd) {
         try {
             //Tests if there is an user in database that has the username and pswd
@@ -195,7 +202,8 @@ app.post("/login", urlencodedParser, async (req, res) => {
 
             if (validPass) {
                 req.session.userName = user[0][2].value; //only 1 row (hence user[0])
-                req.session.userRole = user[0][7].value
+                req.session.userRole = user[0][7].value;
+                req.session.avatar = user[0][5].value;
                 console.log('User logged : ', req.session.userName);
 
                 res.status(200);
@@ -219,7 +227,7 @@ app.post("/login", urlencodedParser, async (req, res) => {
     }
 });
 
-app.post('/register', urlencodedParser, async (req, res) => {
+app.post('/register', async (req, res) => {
     console.log("POST request from /register");
     const [username, email, pswd] = [req.body.username, req.body.email, req.body.pswd];
 
