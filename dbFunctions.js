@@ -1025,8 +1025,8 @@ async function selectAnimesFromEachGenre() {
         let results = [];
         let myResult = {};
         dbrequest.on('row', (columns) => {
-            let [genreName, animeTitle, animeImagePath] = [columns[0].value, columns[1].value, columns[2].value];
-            myResult = { genreName, animeTitle, animeImagePath }
+            let [genreName, animeTitle, image] = [columns[0].value, columns[1].value, columns[2].value];
+            myResult = { genreName, animeTitle, image }
             results.push(myResult);
         });
 
@@ -1087,8 +1087,8 @@ async function selectTopAnimes() {
         let results = [];
         let myResult = {};
         dbrequest.on('row', (columns) => {
-            let [animeTitle, animeImagePath] = [columns[0].value, columns[1].value];
-            myResult = { animeTitle, animeImagePath }
+            let [animeTitle, image] = [columns[0].value, columns[1].value];
+            myResult = { animeTitle, image }
             results.push(myResult);
         });
 
@@ -1118,8 +1118,8 @@ async function selectRecentAnimes() {
         let results = [];
         let myResult = {};
         dbrequest.on('row', (columns) => {
-            let [animeTitle, animeImagePath] = [columns[0].value, columns[1].value];
-            myResult = { animeTitle, animeImagePath }
+            let [animeTitle, image] = [columns[0].value, columns[1].value];
+            myResult = { animeTitle, image }
             results.push(myResult);
         });
 

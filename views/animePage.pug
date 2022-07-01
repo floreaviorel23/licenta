@@ -17,7 +17,10 @@ html(lang="en")
                         - const myAnime = {};
 
                         .image-container.d-flex.justify-content-center.mb-4
-                            img.animeImg.rounded(src=`${anime.image}`, alt="")
+                            -if(anime.image && anime.image != '')
+                                img.animeImg.rounded(src=`${anime.image}`, alt="")
+                            -else
+                                img.animeImg.rounded(src=`./images/login-bg.jpg`, alt="")
 
                         -if(!anime.myStatus)
                             .addButtonDiv.d-flex.justify-content-center.my-3

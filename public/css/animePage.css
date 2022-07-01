@@ -22,6 +22,8 @@
 
 .animeImg {
     width: 100%;
+    height: 440px;
+    object-fit: cover;
 }
 
 .animeTitle {

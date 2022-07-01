@@ -3,7 +3,11 @@ mixin mixinCharacterCard(character)
         .card.mb-3(style='max-width: 500px;').bg-dark.text-white.rounded
             .row.g-0
                 .col-md-4.pe-1
-                    img.characterImg.img-fluid.rounded-start(src=`${character.image}` alt='...')
+                    -if(character.image && character.image != '')
+                        img.characterImg.img-fluid.rounded-start(src=`${character.image}` alt='...')
+                    -else
+                        img.characterImg.img-fluid.rounded-start(src=`./images/characters/naruto/asd.jpg` alt='...')
+
                 .col-md-8.px-1
                     .card-body.pt-2.px-3
                         h6.card-title #{character.name}

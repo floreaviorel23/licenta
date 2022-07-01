@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+body{
+    margin-bottom: 100px;
+}
+
 .second-navbar{
     background-color: darkslategray;
 }
@@ -74,7 +78,10 @@
 }
 
 .card-img-top {
-    border-radius: 5px;
+        height: 190px;
+        width: 150px;
+        object-fit: cover;
+
     width: 100%;
 }
 

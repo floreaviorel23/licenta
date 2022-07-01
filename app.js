@@ -56,6 +56,7 @@ app.get("/", async (req, res) => {
 
         let topAnimes = await db.selectTopAnimes();
         toSend.topAnimes = topAnimes;
+        //console.log(topAnimes);
 
         let recentAnimes = await db.selectRecentAnimes();
         toSend.recentAnimes = recentAnimes;

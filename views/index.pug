@@ -12,7 +12,6 @@ html(lang="en")
         +navbar(userName, userRole, userAvatar)
 
         - const anime = {};
-        - anime.imgPath = './images/Naruto.jpg';
 
         .container 
             .row
@@ -34,20 +33,17 @@ html(lang="en")
                                             .container
                                                 .d-flex.cards-container
                                                     -for(let i=0; i<4; i++)
-                                                        -topAnimes[i].imgPath = './images/Naruto.jpg';
                                                         +mixinAnimeCard(topAnimes[i])
 
                                         .item
                                             .container
                                                 .d-flex.cards-container
                                                     -for(let i=4; i<8; i++)
-                                                        -topAnimes[i].imgPath = './images/Naruto.jpg';
                                                         +mixinAnimeCard(topAnimes[i])
                                         .item
                                             .container
                                                 .d-flex.cards-container
                                                     -for(let i=8; i<12; i++)
-                                                        -topAnimes[i].imgPath = './images/Naruto.jpg';
                                                         +mixinAnimeCard(topAnimes[i])
 
                                     // Left and right controls
