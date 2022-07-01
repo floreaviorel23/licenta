@@ -102,6 +102,7 @@ app.get("/logout", (req, res) => {
     if (req.session.userName) {
         req.session.userName = null;
         req.session.userRole = null;
+        req.session.userAvatar = null;
         res.status(200);
         res.redirect('/');
     }
@@ -123,9 +124,11 @@ app.get("/profile/:uuid", async (req, res) => {
         }
         else {
             let userName = req.session.userName;
-            toSend.userName = userName;
             let userRole = req.session.userRole;
+            let userAvatar = req.session.avatar;
+            toSend.userName = userName;
             toSend.userRole = userRole;
+            toSend.userAvatar = userAvatar;
             let statistics = {};
 
             let userInfo = await db.selectSingleUserAdmin(userProfile);
@@ -154,7 +157,7 @@ app.get("/profile/:uuid", async (req, res) => {
             statistics.numberOfMangasRead = numberOfMangasRead;
 
             toSend.statistics = statistics;
-            console.log(toSend);
+            //console.log(toSend);
             res.status(200);
             res.render("profilePage", toSend);
         }

@@ -9,7 +9,7 @@
     width: 100%;
 }
 
-.characterImg{
+.characterImg {
     width: 100%;
     height: 140px;
     object-fit: cover;
@@ -33,14 +33,14 @@
     color: aliceblue;
 }
 
-.averageRatingDiv{
+.averageRatingDiv {
     width: 100%;
     border: 1px solid black;
     border-radius: 30px 0 0 30px;
     overflow: hidden;
 }
 
-.averageRatingValueDiv{
+.averageRatingValueDiv {
     width: 100%;
     height: 100%;
     border: 1px solid black;
@@ -48,25 +48,32 @@
     overflow: hidden;
 }
 
-.descriptionDiv{
+.descriptionDiv {
     text-indent: 50px;
 }
 
-.delete-icon{
+.delete-icon {
     width: 22px;
     height: 22px;
 }
 
-.delete-icon:hover{
+.delete-icon:hover {
     color: var(--bs-danger);
 }
 
-.edit-icon{
+.edit-icon {
     width: 25px;
     height: 25px;
     margin-right: 7px;
 }
 
-.edit-icon:hover{
+.edit-icon:hover {
     color: var(--bs-warning);
+}
+
+.comment-user-avatar {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 3px;
 }

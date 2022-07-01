@@ -11,8 +11,10 @@ router.get("/", async (req, res) => {
     try {
         let userName = req.session.userName;
         let userRole = req.session.userRole;
+        let userAvatar = req.session.avatar;
         toSend.userName = userName;
         toSend.userRole = userRole;
+        toSend.userAvatar = userAvatar;
 
         let animes = await db.selectAnimesFromEachGenre();
         let genres = await db.selectAllGenres();
@@ -82,13 +84,16 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
         }
         else {
             let userName = req.session.userName;
-            toSend.userName = userName;
             let userRole = req.session.userRole;
+            let userAvatar = req.session.avatar;
+            toSend.userName = userName;
             toSend.userRole = userRole;
+            toSend.userAvatar = userAvatar;
+
             let anime = await db.selectExactAnimeAdmin(animeTitle, userName);
             //console.log(anime);
             if (anime.length == 1 && anime[0].title == animeTitle) {
-                console.log(anime[0]);
+                //console.log(anime[0]);
 
                 toSend.type = 'anime';
                 toSend.page = page;
@@ -335,8 +340,10 @@ router.get("/watchlist/:uuid", async (req, res) => {
         else {
             let userName = req.session.userName;
             let userRole = req.session.userRole;
+            let userAvatar = req.session.avatar;
             toSend.userName = userName;
             toSend.userRole = userRole;
+            toSend.userAvatar = userAvatar;
 
             let rows = await db.selectUserAnimeWatchlist(userProfile);
             //console.log(rows);
@@ -369,8 +376,10 @@ router.get("/genre/:uuid", async (req, res) => {
             else {
                 let userName = req.session.userName;
                 let userRole = req.session.userRole;
+                let userAvatar = req.session.avatar;
                 toSend.userName = userName;
                 toSend.userRole = userRole;
+                toSend.userAvatar = userAvatar;
 
                 let animes = await db.selectAllAnimesFromGenre(genreName)
                 toSend.animes = animes;
@@ -403,8 +412,10 @@ router.get("/characters/:uuid", async (req, res) => {
         else {
             let userName = req.session.userName;
             let userRole = req.session.userRole;
+            let userAvatar = req.session.avatar;
             toSend.userName = userName;
             toSend.userRole = userRole;
+            toSend.userAvatar = userAvatar;
 
             characters = await db.selectAnimeCharacters(animeTitle);
             toSend.characters = characters;

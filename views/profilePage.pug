@@ -10,7 +10,7 @@ html(lang="en")
     link(rel="stylesheet" href="./css/profilePage.css")
 
     body
-        +navbar(userName, userRole)
+        +navbar(userName, userRole, userAvatar)
 
         .container.mt-5.py-3
             .row
@@ -38,13 +38,13 @@ html(lang="en")
                 .col-3.d-flex.align-content-center
                     .container-fluid
                         .row 
-                            h1 #{userProfile}
+                            h1 #{userInfo.username}
                         .row
-                            h6 Joined 28 May 2022           
+                            h6 Joined #{userInfo.createdAt}      
                         .row.mt-3
-                            button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button"  onclick=`location.href = '/anime/watchlist/${userName}';` class="" aria-label="Edit") Anime Watchlist 
+                            button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button"  onclick=`location.href = '/anime/watchlist/${userInfo.username}';` class="" aria-label="Edit") Anime Watchlist 
                         .row.mt-3
-                            button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button" onclick=`location.href = '/manga/watchlist/${userName}';` class="" aria-label="Edit") Manga Watchlist 
+                            button.btn.btn-sm.btn-primary.btn-edit.rounded.editDiv(type="button" onclick=`location.href = '/manga/watchlist/${userInfo.username}';` class="" aria-label="Edit") Manga Watchlist 
 
                 .col-1
                 .col-4

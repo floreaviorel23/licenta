@@ -992,9 +992,9 @@ async function selectAnimeComments(animeUuid, page) {
         let comments = [];
         let myComment = {};
         dbrequest.on('row', (columns) => {
-            let [username, text, comDate, comUuid] = [columns[0].value, columns[1].value, columns[2].value, columns[3].value];
+            let [username, text, comDate, comUuid, userAvatar] = [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value];
             comDate = sqlToJsDate(comDate);
-            myComment = { username, text, comDate, comUuid }
+            myComment = { username, text, comDate, comUuid, userAvatar }
             comments.push(myComment);
         });
 

@@ -9,7 +9,7 @@ html(lang="en")
     link(rel="stylesheet" href="./css/genrePage.css")
 
     body
-        +navbar(userName, userRole)
+        +navbar(userName, userRole, userAvatar)
 
         - genre = genre.charAt(0).toUpperCase() + genre.slice(1)
         .container.mt-3.p-5

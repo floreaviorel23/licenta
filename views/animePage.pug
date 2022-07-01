@@ -8,17 +8,16 @@ html(lang="en")
     +head("Anime Page")
     link(rel="stylesheet" href="./css/animePage.css")
     body 
-        +navbar(userName, userRole)
+        +navbar(userName, userRole, userAvatar)
 
         .container.mt-5.top-level-container(data-animeTitle = `${anime.title}`)
             .row.mb-5.pb-3
                 .col-3.animeLeftDiv
                     .animeCard.rounded
                         - const myAnime = {};
-                        - myAnime.imgPath = 'uploads\\47a8d72d3f3c9fe050894a14c6212a76';
 
                         .image-container.d-flex.justify-content-center.mb-4
-                            img.animeImg.rounded(src=myAnime.imgPath, alt="")
+                            img.animeImg.rounded(src=`${anime.image}`, alt="")
 
                         -if(!anime.myStatus)
                             .addButtonDiv.d-flex.justify-content-center.my-3
@@ -83,7 +82,6 @@ html(lang="en")
                         h4 List of characters
                         .row.pt-2
                             -for(let i=0; i<8 && i<anime.characters.length; i++)
-                                -anime.characters[i].imgPath = './images/characters/naruto/asd (6).png';
                                 +mixinCharacterCard(anime.characters[i])
 
                 -if(anime.characters.length > 8)

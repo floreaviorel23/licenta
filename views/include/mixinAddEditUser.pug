@@ -37,9 +37,10 @@ mixin mixinAddEditUser(action, type)
                 .mb-3
                     label.form-label(for="name") Name
                     input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter name" name="name")
-                .mb-3
-                    label.form-label(for="avatar") Avatar
-                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                //
+                    .mb-3
+                        label.form-label(for="avatar") Avatar
+                        input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
                 .mb-3
                     label.form-label(for='dateOfBirth') Date of Birth
                     input.mb-3.form-control#dateField(type="date" name='dob' max="2017-12-31" placeholder="DoB")
@@ -75,7 +76,7 @@ mixin mixinAddEditUser(action, type)
                     input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter name" name="name")
                 .mb-3
                     label.form-label(for="avatar") Avatar
-                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                    input#username.form-control.border.rounded.border-1(type="file" name="avatar")
                 .mb-3
                     label.form-label(for="type") Type
                     input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter type (main, side, etc.)" name="type")
@@ -99,7 +100,7 @@ mixin mixinAddEditUser(action, type)
                     textarea.form-control(rows='3' name='description')
                 .mb-3
                     label.form-label(for="avatar") Avatar
-                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                    input#username.form-control.border.rounded.border-1(type="file" name="avatar")
                 .mb-3
                     label.form-label(for="numberOfEpisodes") Number of episodes
                     input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter number of episodes" name="numberOfEpisodes")
@@ -145,7 +146,7 @@ mixin mixinAddEditUser(action, type)
                     textarea.form-control(rows='3' name='description')
                 .mb-3
                     label.form-label(for="avatar") Avatar
-                    input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter avatar" name="avatar")
+                    input#username.form-control.border.rounded.border-1(type="file" name="avatar")
                 .mb-3
                     label.form-label(for="numberOfChapters") Number of chapters
                     input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter number of chapters" name="numberOfChapters")

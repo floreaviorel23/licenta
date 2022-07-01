@@ -12,19 +12,19 @@ router.use((req, res, next) => {
     let userRole = req.session.userRole;
     if (!userName) {
         res.status(200);
-        console.log('middleware');
+        //console.log('middleware');
         res.redirect('/login');
         return;
     }
     else {
         if (!userRole || userRole != 'Admin') {
             res.status(200);
-            console.log('middleware');
+            //console.log('middleware');
             res.redirect('/');
             return;
         }
         else {
-            console.log('middleware');
+            //console.log('middleware');
             next();
         }
     }
@@ -35,8 +35,10 @@ router.get("/", async (req, res) => {
     console.log("GET Request from admin");
     let userName = req.session.userName;
     let userRole = req.session.userRole;
+    let userAvatar = req.session.avatar;
     toSend.userName = userName;
     toSend.userRole = userRole;
+    toSend.userAvatar = userAvatar;
     try {
         if (!userName || userName == '') {
             res.status(200);
@@ -68,8 +70,10 @@ router.get("/action/select/:uuid", async (req, res) => {
     const uuid = req.params.uuid;
     let userName = req.session.userName;
     let userRole = req.session.userRole;
+    let userAvatar = req.session.avatar;
     toSend.userName = userName;
     toSend.userRole = userRole;
+    toSend.userAvatar = userAvatar;
     toSend.action = 'Select';
     toSend.type = uuid;
     try {
@@ -105,8 +109,10 @@ router.get("/action/add/:uuid", async (req, res) => {
     const uuid = req.params.uuid;
     let userName = req.session.userName;
     let userRole = req.session.userRole;
+    let userAvatar = req.session.avatar;
     toSend.userName = userName;
     toSend.userRole = userRole;
+    toSend.userAvatar = userAvatar;
     toSend.action = 'Add';
     toSend.type = uuid;
     try {
@@ -142,8 +148,10 @@ router.get("/action/edit/:uuid", async (req, res) => {
     const uuid = req.params.uuid;
     let userName = req.session.userName;
     let userRole = req.session.userRole;
+    let userAvatar = req.session.avatar;
     toSend.userName = userName;
     toSend.userRole = userRole;
+    toSend.userAvatar = userAvatar;
     toSend.action = 'Edit';
     toSend.type = uuid;
     try {
@@ -179,8 +187,10 @@ router.get("/action/delete/:uuid", async (req, res) => {
     const uuid = req.params.uuid;
     let userName = req.session.userName;
     let userRole = req.session.userRole;
+    let userAvatar = req.session.avatar;
     toSend.userName = userName;
     toSend.userRole = userRole;
+    toSend.userAvatar = userAvatar;
     toSend.action = 'Delete';
     toSend.type = uuid;
     try {
@@ -217,7 +227,7 @@ router.get("/action/delete/:uuid", async (req, res) => {
 
 router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
     console.log("POST request from /admin/action/add/:uuid");
-    console.log('image : ', req.file);
+    //console.log('image : ', req.file);
 
     const uuid = req.params.uuid;
     let userName = req.session.userName;
@@ -254,9 +264,10 @@ router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
     }
 
     if (uuid == 'Person') {
-        const [name, avatar, dob] = [req.body.name, req.body.avatar, req.body.dob];
+        const [name, dob] = [req.body.name, req.body.dob];
         if (name) {
             try {
+                let avatar = null;
                 await db.registerNewPersonAdmin(name, avatar, dob);
                 res.status(200);
                 res.redirect(`/admin/action/add/${uuid}`);
@@ -314,7 +325,13 @@ router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
     }
 
     if (uuid == 'Character') {
-        const [name, avatar, type] = [req.body.name, req.body.avatar, req.body.type];
+        let [name, imgPathRaw, type] = [req.body.name, req.file.path, req.body.type];
+        let avatar = '';
+        if (imgPathRaw && imgPathRaw != '') {
+            imgPathRaw = imgPathRaw.path;
+            avatar = path.normalize(imgPathRaw.replace('public', '.'));
+        }
+        console.log(avatar);
         if (name) {
             try {
                 await db.registerNewCharacterAdmin(name, avatar, type);
@@ -367,7 +384,14 @@ router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
             console.log(`va : ${vas[i]}`);
         }
         */
-        const [title, author, description, avatar, numberOfEpisodes] = [req.body.title, req.body.author, req.body.description, req.body.avatar, req.body.numberOfEpisodes];
+
+        let [title, author, description, imgPathRaw, numberOfEpisodes] = [req.body.title, req.body.author, req.body.description, req.file.path, req.body.numberOfEpisodes];
+        let avatar = null;
+        if (imgPathRaw && imgPathRaw != '') {
+            imgPathRaw = imgPathRaw.path;
+            avatar = path.normalize(imgPathRaw.replace('public', '.'));
+        }
+        console.log('avatar : ', avatar);
 
         if (title && avatar && numberOfEpisodes && !isNaN(numberOfEpisodes)) {
             try {
@@ -391,7 +415,6 @@ router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
                         }
                         catch (err) {
                             console.error('err add char', err);
-                            console.log(`couldnt add character ${character} to anime ${title}`);
                         }
                     }
                 }
@@ -415,7 +438,10 @@ router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
     }
 
     if (uuid == 'Manga') {
-        const [title, author, description, avatar, numberOfChapters] = [req.body.title, req.body.author, req.body.description, req.body.avatar, req.body.numberOfChapters];
+        const [title, author, description, imgPathRaw, numberOfChapters] = [req.body.title, req.body.author, req.body.description, req.file.path, req.body.numberOfChapters];
+        const avatar = path.normalize(imgPathRaw.replace('public', '.'));
+        console.log(avatar);
+
         if (title && avatar && numberOfChapters && !isNaN(numberOfChapters)) {
             try {
                 await db.registerNewMangaAdmin(title, author, description, avatar, numberOfChapters);
@@ -488,7 +514,8 @@ router.post("/action/edit/:uuid", upload.single("avatar"), async (req, res) => {
     }
 
     if (uuid == 'Person') {
-        const [personUuid, name, avatar, dob] = [req.body.personUuid, req.body.name, req.body.avatar, req.body.dob];
+        const [personUuid, name, dob] = [req.body.personUuid, req.body.name, req.body.dob];
+        let avatar = undefined;
         if (personUuid && (name || avatar || dob)) {
             try {
                 await db.updatePersonAdmin(personUuid, name, avatar, dob);
@@ -508,7 +535,13 @@ router.post("/action/edit/:uuid", upload.single("avatar"), async (req, res) => {
     }
 
     if (uuid == 'Character') {
-        const [characterUuid, name, avatar, type] = [req.body.characterUuid, req.body.name, req.body.avatar, req.body.type];
+        let [characterUuid, name, imgPathRaw, type] = [req.body.characterUuid, req.body.name, req.file, req.body.type];
+        let avatar = null;
+        if (imgPathRaw && imgPathRaw != '') {
+            imgPathRaw = imgPathRaw.path;
+            avatar = path.normalize(imgPathRaw.replace('public', '.'));
+        }
+        console.log('avatar : ', avatar);
         if (characterUuid && (name || avatar || type)) {
             try {
                 await db.updateCharacterAdmin(characterUuid, name, avatar, type);
@@ -528,15 +561,77 @@ router.post("/action/edit/:uuid", upload.single("avatar"), async (req, res) => {
     }
 
     if (uuid == 'Anime') {
-        const [animeUuid, title, author, description, avatar, numberOfEpisodes] = [req.body.animeUuid, req.body.title, req.body.author, req.body.description, req.body.avatar, req.body.numberOfEpisodes];
+
+        let genres = [], characters = [], vas = [];
+
+        if (typeof req.body.genres == 'string' && req.body.genres && req.body.genres != '') {
+            genres[0] = req.body.genres;
+        }
+        if (typeof req.body.characters == 'string' && req.body.characters && req.body.characters != '') {
+            characters[0] = req.body.characters;
+        }
+        if (typeof req.body.va == 'string' && req.body.va && req.body.va != '') {
+            vas[0] = req.body.va;
+        }
+
+        for (let index = 0; index < 10; index++) {
+            if (req.body.genres[index] && req.body.genres[index] != '' && typeof req.body.genres != 'string')
+                genres.push(req.body.genres[index]);
+            else break;
+        }
+        for (let index = 0; index < 15; index++) {
+            if (typeof req.body.characters != 'string' && req.body.characters[index] && req.body.characters[index] != '') {
+                characters.push(req.body.characters[index]);
+                if (typeof req.body.va != 'string' && req.body.va[index] && req.body.va[index] != '')
+                    vas.push(req.body.va[index]);
+                else
+                    vas.push('');
+            }
+            else break;
+        }
+        console.log('genres : ', genres);
+        console.log('characters : ', characters);
+        console.log('vas : ', vas);
+        let [animeUuid, title, author, description, imgPathRaw, numberOfEpisodes] = [req.body.animeUuid, req.body.title, req.body.author, req.body.description, req.file, req.body.numberOfEpisodes];
+        let avatar = null;
+        if (imgPathRaw && imgPathRaw != '') {
+            imgPathRaw = imgPathRaw.path;
+            avatar = path.normalize(imgPathRaw.replace('public', '.'));
+        }
+        console.log('avatar : ', avatar);
         if (numberOfEpisodes && isNaN(numberOfEpisodes)) {
             res.status(400);
             res.send("Number of episodes is not a number");
             return;
         }
-        if (animeUuid && (title || author || description || avatar || numberOfEpisodes)) {
+        if (animeUuid) {
             try {
-                await db.updateAnimeAdmin(animeUuid, title, author, description, avatar, numberOfEpisodes);
+                if (title || author || description || avatar || numberOfEpisodes) {
+                    await db.updateAnimeAdmin(animeUuid, title, author, description, avatar, numberOfEpisodes);
+                }
+                if (animeUuid && animeUuid != '' && genres.length > 0) {
+                    for (let genre of genres) {
+                        try {
+                            console.log('here in genres');
+                            await db.addGenreToAnime(genre, animeUuid);
+                        }
+                        catch {
+                            console.log(`couldnt add genre ${genre} to anime ${title}`);
+                        }
+                    }
+                }
+
+                if (animeUuid && animeUuid != '' && characters.length > 0) {
+                    for (let i = 0; i < characters.length; i++) {
+                        try {
+                            await db.addCharacterToAnime(characters[i], vas[i], animeUuid);
+                        }
+                        catch (err) {
+                            console.error('err add char', err);
+                        }
+                    }
+                }
+
             }
             catch (err) {
                 res.status(400);
@@ -553,7 +648,9 @@ router.post("/action/edit/:uuid", upload.single("avatar"), async (req, res) => {
     }
 
     if (uuid == 'Manga') {
-        const [mangaUuid, title, author, description, avatar, numberOfChapters] = [req.body.mangaUuid, req.body.title, req.body.author, req.body.description, req.body.avatar, req.body.numberOfChapters];
+        const [mangaUuid, title, author, description, imgPathRaw, numberOfChapters] = [req.body.mangaUuid, req.body.title, req.body.author, req.body.description, req.file.path, req.body.numberOfChapters];
+        const avatar = path.normalize(imgPathRaw.replace('public', '.'));
+        console.log('avatar : ', avatar);
         if (numberOfChapters && isNaN(numberOfChapters)) {
             res.status(400);
             res.send("Number of chapters is not a number");
