@@ -132,6 +132,7 @@ router.get("/:uuid/page/:uuid2", async (req, res) => {
                 try {
                     comments = await db.selectAnimeComments(anime[0].uuid, page);
                     anime[0].comments = comments;
+                    //console.log(comments);
                 }
                 catch {
                     console.log('Characters catch');

@@ -1,0 +1,27 @@
+include ./common/navbar.pug
+include ./common/head.pug
+
+doctype html
+html(lang="en")
+    +head("Edit Profile Page")
+    //link(rel="stylesheet" href="./css/profilePage.css")
+
+    body
+        +navbar(userName, userRole, userAvatar)
+    
+        .container.mx-5.px-5.mt-5
+            form(action=`/profile/edit-profile` method="POST" enctype="multipart/form-data")
+                .mb-3
+                    label.form-label(for="avatar") Avatar
+                    input#username.form-control.border.rounded.border-1(type="file" name="avatar")
+                .mb-3
+                    label.form-label(for='dateOfBirth') Date of Birth
+                    input.mb-3.form-control#dateField(type="date" name='dob' max="2017-12-31" placeholder="DoB")
+                .mb-3
+                    label(for='aboutMe') About Me
+                    textarea.form-control(rows='3' name='aboutMe')
+                .mb-3
+                    label.form-label(for="pswd") Password
+                    input#pwd.form-control.border.rounded.border-1(type="password" placeholder="Enter password" name="pswd")
+                button.btn.btn-primary(type='submit') Submit
+                button.btn.btn-primary.float-end(type='button' onclick=`location.href = '/profile/${userName}'`) Go back

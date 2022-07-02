@@ -198,6 +198,41 @@ async function updateUserRole(username, role) {
     return prom;
 }
 
+// - - - - - - - - - - Update an user profile- - - - - - - - - - - 
+async function updateUserProfile(username, avatar, dob, aboutMe) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        if (!avatar || avatar == '')
+            avatar = TYPES.Null;
+        if (!dob || dob == '')
+            dob = TYPES.Null;
+        if (!aboutMe || aboutMe == '')
+            aboutMe = TYPES.Null;
+
+        const dbrequest = new Request('UpdateUser', (err, rowCount) => {
+            if (err) {
+                reject("failed UpdateUser");
+                console.log("err UpdateUser : ", err);
+            }
+        });
+
+        dbrequest.addParameter('username', TYPES.NVarChar, username);
+        dbrequest.addParameter('avatar', TYPES.NVarChar, avatar);
+        dbrequest.addParameter('dob', TYPES.DateTime, dob);
+        dbrequest.addParameter('about_me', TYPES.NVarChar, aboutMe);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed UpdateUser");
+            resolve("success");
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
 // - - - - - - - - - - Select all info about an user - - - - - - - - - - - 
 async function selectUserAdmin(username) {
     const prom = new Promise(async (resolve, reject) => {
@@ -253,13 +288,13 @@ async function selectSingleUserAdmin(username) {
 
         let user = {};
         dbrequest.on('row', (columns) => {
-            let [id, uuid, username, email, pass, avatar, dob, role, createdAt] =
-                [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value, columns[6].value, columns[7].value, columns[8].value];
+            let [id, uuid, username, email, pass, avatar, dob, role, createdAt, aboutMe] =
+                [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value, columns[6].value, columns[7].value, columns[8].value, columns[9].value];
             if (dob) {
                 dob = sqlToJsDate(dob);
             }
             createdAt = sqlToJsDate(createdAt);
-            user = { id, uuid, username, email, pass, avatar, dob, role, createdAt };
+            user = { id, uuid, username, email, pass, avatar, dob, role, createdAt, aboutMe };
         });
 
         dbrequest.on('requestCompleted', () => {
@@ -324,6 +359,33 @@ async function addNewFriend(username, newFriend) {
     return prom;
 }
 
+// - - - - - - - - - - Delete a friend of an user - - - - - - - - - - - 
+async function deleteFriend(user, friendName) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('DeleteFriend', (err, rowCount) => {
+            if (err) {
+                reject("failed DeleteFriend");
+                console.log("err DeleteFriend : ", err);
+            }
+        });
+
+        dbrequest.addParameter('user1', TYPES.NVarChar, user);
+        dbrequest.addParameter('user2', TYPES.NVarChar, friendName);
+
+        let message;
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed DeleteFriend");
+            resolve('success DeleteFriend');
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
 // - - - - - - - - - - Select all info about all people with that name - - - - - - - - - - - 
 async function selectPersonAdmin(person) {
     const prom = new Promise(async (resolve, reject) => {
@@ -360,7 +422,6 @@ async function selectPersonAdmin(person) {
     });
     return prom;
 }
-
 // - - - - - - - - - - Add a new person in admin mode to database - - - - - - - - - - - 
 async function registerNewPersonAdmin(name, avatar, dob) {
     const prom = new Promise(async (resolve, reject) => {
@@ -1935,6 +1996,7 @@ function sqlToJsDate(sqlDate) {
     let date = sqlDate.substring(0, 10);
     let arr = date.split('-');
     arr = arr.reverse();
+
     date = arr.join("/");
 
     //let time = sqlDate.substring(10, 18);
@@ -1955,6 +2017,8 @@ module.exports = {
     selectSingleUserAdmin: selectSingleUserAdmin,
 
     addNewFriend: addNewFriend,
+    deleteFriend: deleteFriend,
+    updateUserProfile: updateUserProfile,
 
     // Person :
     selectPersonAdmin: selectPersonAdmin,

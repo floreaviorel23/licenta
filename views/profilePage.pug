@@ -22,12 +22,12 @@ html(lang="en")
                             img.pfp.rounded(src='./images/hmm.jpg')
                     -if(userName == userProfile)                    
                         .div.ms-4.ps-3.mt-3
-                            button.btn.btn-primary.btn-edit.rounded.editDiv(type="button" class="" aria-label="Edit") Edit Profile 
+                            button.btn.btn-primary.btn-edit.rounded.editDiv(type="button" onclick=`location.href = '/profile/edit-profile/${userName}';` class="" aria-label="") Edit Profile 
                                 svg.ms-3(xmlns='http://www.w3.org/2000/svg' aria-hidden='true' role='img' width='1em' height='1em' preserveaspectratio='xMidYMid meet' viewbox='0 0 36 36')
                                     path.clr-i-outline.clr-i-outline-path-1(fill='currentColor' d='M33.87 8.32L28 2.42a2.07 2.07 0 0 0-2.92 0L4.27 23.2l-1.9 8.2a2.06 2.06 0 0 0 2 2.5a2.14 2.14 0 0 0 .43 0l8.29-1.9l20.78-20.76a2.07 2.07 0 0 0 0-2.92ZM12.09 30.2l-7.77 1.63l1.77-7.62L21.66 8.7l6 6ZM29 13.25l-6-6l3.48-3.46l5.9 6Z')
                                     path(fill='none' d='M0 0h36v36H0z')
                         .div.ms-4.ps-3.mt-2.addFriendDiv
-                            button.btn.btn-info.btn-edit.rounded.editDiv(type="button" class="" onclick=`addNewFriend('${userName}')` aria-label="Edit") Add Friend
+                            button.btn.btn-info.btn-edit.rounded.editDiv(type="button" class="" onclick=`addNewFriend('${userName}')` aria-label="") Add Friend
                                 svg.ms-3.icon.icon-tabler.icon-tabler-friends(xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewbox='0 0 24 24' stroke-width='2' stroke='currentColor' fill='none' stroke-linecap='round' stroke-linejoin='round')
                                     path(stroke='none' d='M0 0h24v24H0z' fill='none')
                                     circle(cx='7' cy='5' r='2')
@@ -52,7 +52,7 @@ html(lang="en")
             .row.mt-5.p-3
                 .bio.mt-2.mb-5
                     h2.mb-3 About me 
-                    p Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque deserunt, tenetur maiores nulla tempore debitis corrupti eveniet illum laboriosam porro aperiam, corporis quae, fugiat fuga suscipit? Atque mollitia vel, sequi modi excepturi quisquam sint, soluta repellendus quaerat quidem placeat? Officiis cumque rerum accusantium minus, quod modi velit molestiae dignissimos quasi ipsam, illo similique amet consequatur nisi repellendus soluta harum quia.
+                    p #{userInfo.aboutMe}
 
             .row.px-3
                 .col-6
@@ -86,9 +86,17 @@ html(lang="en")
             .row.mt-5.px-3.pt-4
                 h2.mb-1 List of friends
                 .container.mt-3
-                    each friend in friends
-                        span.me-4
-                            a(href=`/profile/${friend.friendName}`).text-decoration-none
-                                span #{friend.friendName}
+                    .row
+                        each friend in friends
+                            .col-3.border.me-5.border-3(id=`friend-${friend.friendName}`)
+                                .row
+                                    .col-10
+                                        a(href=`/profile/${friend.friendName}`).text-decoration-none
+                                            span 
+                                                h4.d-inline #{friend.friendName}
+                                    -if(userName == userProfile)
+                                        .col-1.ms-1.pb-2
+                                            button(type="button" class="btn-close" aria-label="Close" onclick=`removeFriend('${userName}','${friend.friendName}')`)
+
 
         script(src="./js/profilePage.js") 

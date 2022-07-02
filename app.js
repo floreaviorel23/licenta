@@ -5,12 +5,13 @@ const path = require('path');
 const cors = require('cors');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
-const multer  = require('multer');
+const multer = require('multer');
+const upload = multer({ dest: 'public/uploads/', limits: { fileSize: 5 * (10 ** 6) } }); //5 MB
 require('dotenv').config();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -133,8 +134,8 @@ app.get("/profile/:uuid", async (req, res) => {
             let statistics = {};
 
             let userInfo = await db.selectSingleUserAdmin(userProfile);
-            console.log(userInfo);
-            toSend.userInfo = {'username':userInfo.username, 'dob':userInfo.dob, 'createdAt':userInfo.createdAt, 'avatar':userInfo.avatar};
+            //console.log(userInfo);
+            toSend.userInfo = { 'username': userInfo.username, 'dob': userInfo.dob, 'createdAt': userInfo.createdAt, 'avatar': userInfo.avatar, 'aboutMe': userInfo.aboutMe };
 
             let favoriteAnimes = await db.selectFavoriteAnimes(userProfile);
             toSend.favoriteAnimes = favoriteAnimes;
@@ -167,6 +168,111 @@ app.get("/profile/:uuid", async (req, res) => {
         console.log(err);
         res.status(500);
         res.send("GET request failed");
+    }
+});
+
+app.get("/profile/edit-profile/:uuid", async (req, res) => {
+    console.log("GET Request from /profile/edit-profile/:uuid");
+    const userProfile = req.params.uuid;
+    let toSend = {};
+    try {
+        if (!req.session.userName || req.session.userName != userProfile) {
+            res.status(400);
+            res.send('Not allowed !!');
+            return;
+        }
+        else {
+            let userName = req.session.userName;
+            let userRole = req.session.userRole;
+            let userAvatar = req.session.avatar;
+            toSend.userName = userName;
+            toSend.userRole = userRole;
+            toSend.userAvatar = userAvatar;
+
+            res.status(200);
+            res.render("editProfilePage", toSend);
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500);
+        res.send("GET request failed");
+    }
+});
+
+app.post("/profile/edit-profile", upload.single("avatar"), async (req, res) => {
+    console.log("POST request from /profile/edit-profile");
+
+    let userName = req.session.userName;
+    if (!userName || userName == '') {
+        res.status(400);
+        res.send('Not allowed!!!');
+        return;
+    }
+    let [dob, pswd, imgPathRaw, aboutMe] = [req.body.dob, req.body.pswd, req.file, req.body.aboutMe];
+    let avatar = null;
+    if (imgPathRaw && imgPathRaw != '') {
+        imgPathRaw = imgPathRaw.path;
+        avatar = path.normalize(imgPathRaw.replace('public', '.'));
+    }
+    console.log('avatar : ', avatar);
+    if (pswd) {
+        try {
+            await db.updateUserPassword(userName, pswd);
+        }
+        catch (err) {
+            res.status(400);
+            res.send("Couldn't update pass");
+            return;
+        }
+    }
+
+    if (dob || avatar || aboutMe) {
+        try {
+            await db.updateUserProfile(userName, avatar, dob, aboutMe);
+            if (avatar && avatar != req.session.avatar)
+                req.session.avatar = avatar;
+        }
+        catch (err) {
+            res.status(400);
+            res.send("Couldn't update user");
+            return;
+        }
+    }
+    res.status(200);
+    res.redirect(`/profile/${userName}`);
+});
+
+
+app.delete("/profile/delete-friend/:uuid/:uuid2", async (req, res) => {
+    console.log("Delete request from /profile/delete-friend/:uuid/:uuid2");
+
+    let user = req.params.uuid;
+    let friendName = req.params.uuid2;
+
+    if (user && user != '' && friendName && friendName != '') {
+        try {
+            if (!req.session.userName || req.session.userName != user) {
+                res.status(400);
+                res.send('Not allowed !!');
+                return;
+            }
+            else {
+                const result = await db.deleteFriend(user, friendName);
+                res.status(200);
+                res.redirect(`/profile/${user}`);
+                return;
+            }
+        }
+        catch (err) {
+            console.log(err);
+            res.status(500).send('Error database');
+            return;
+        }
+    }
+    else {
+        res.status(400).send('Error list of parameters');
+        return;
     }
 });
 
