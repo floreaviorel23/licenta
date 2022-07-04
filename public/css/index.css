@@ -85,6 +85,14 @@ body{
     width: 100%;
 }
 
+.recently-added .card-img-top{
+    height: 150px;
+    width: 150px;
+    object-fit: cover;
+
+width: 100%;
+}
+
 .card-img-top:hover {
     opacity: 0.6;
 }

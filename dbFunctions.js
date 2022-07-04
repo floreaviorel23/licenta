@@ -838,7 +838,7 @@ async function updateCharacterAdmin(characterUuid, name, avatar, type) {
 
 // - - - - - - - - - - Select all info about all animes with that name - - - - - - - - - - -
 
-async function selectAnimeAdmin(anime, user) {
+async function selectAnimeAdmin(anime, user, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
@@ -847,7 +847,12 @@ async function selectAnimeAdmin(anime, user) {
         if (!user || user == '')
             user = TYPES.Null;
 
-        const dbrequest = new Request('ReadAnime', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'ReadManga';
+        else proc = 'ReadAnime';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed select anime admin");
                 console.log("err select anime : ", err);
@@ -882,7 +887,7 @@ async function selectAnimeAdmin(anime, user) {
 
 // - - - - - - - - - - Select all info about all animes with EXACT that name - - - - - - - - - - -
 
-async function selectExactAnimeAdmin(anime, user) {
+async function selectExactAnimeAdmin(anime, user, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
@@ -891,7 +896,12 @@ async function selectExactAnimeAdmin(anime, user) {
         if (!user || user == '')
             user = TYPES.Null;
 
-        const dbrequest = new Request('ReadExactAnime', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'ReadExactManga';
+        else proc = 'ReadExactAnime';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed select anime admin");
                 console.log("err select anime : ", err);
@@ -930,12 +940,17 @@ async function selectExactAnimeAdmin(anime, user) {
 }
 
 // - - - - - - - - - - Select all genres of an anime with that uuid - - - - - - - - - - - 
-async function selectAnimeGenres(animeUuid) {
+async function selectAnimeGenres(animeUuid, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
-        const dbrequest = new Request('SelectAnimeGenres', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'SelectMangaGenres';
+        else proc = 'SelectAnimeGenres';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed SelectAnimeGenres");
                 console.log("err SelectAnimeGenres : ", err);
@@ -965,12 +980,17 @@ async function selectAnimeGenres(animeUuid) {
 
 
 // - - - - - - - - - - Select an user anime watchlist - - - - - - - - - - - 
-async function selectUserAnimeWatchlist(username) {
+async function selectUserAnimeWatchlist(username, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
-        const dbrequest = new Request('SelectUserAnimeWatchlist', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'SelectUserMangaWatchlist';
+        else proc = 'SelectUserAnimeWatchlist';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed SelectUserAnimeWatchlist");
                 console.log("err SelectUserAnimeWatchlist : ", err);
@@ -982,9 +1002,9 @@ async function selectUserAnimeWatchlist(username) {
         let results = [];
         let myResult = {};
         dbrequest.on('row', (columns) => {
-            let [title, status, personalRating, averageRating, createdAt] = [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value];
+            let [title, status, personalRating, averageRating, createdAt, imgSrc] = [columns[0].value, columns[1].value, columns[2].value, columns[3].value, columns[4].value, columns[5].value];
             createdAt = sqlToJsDate(createdAt);
-            myResult = { title, status, personalRating, averageRating, createdAt };
+            myResult = { title, status, personalRating, averageRating, createdAt, imgSrc };
 
             results.push(myResult);
         });
@@ -1033,14 +1053,56 @@ async function selectAnimeCharacters(animeTitle) {
     return prom;
 }
 
-// - - - - - - - - - - Select all comments about an anime with that uuid - - - - - - - - - - - 
-async function selectAnimeComments(animeUuid, page) {
+
+
+
+// - - - - - - - - - - Select all characters about an manga with that exact title - - - - - - - - - - - 
+async function selectMangaCharacters(animeTitle) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
+        const dbrequest = new Request('SelectMangaCharacters', (err, rowCount) => {
+            if (err) {
+                reject("failed SelectMangaCharacters");
+                console.log("err SelectMangaCharacters : ", err);
+            }
+        });
+
+        dbrequest.addParameter('animeTitle', TYPES.NVarChar, animeTitle);
+
+        let characters = [];
+        let myCharacter = {};
+        dbrequest.on('row', (columns) => {
+            let [name, type, image] = [columns[0].value, columns[1].value, columns[2].value];
+
+            myCharacter = { name, type, image }
+            characters.push(myCharacter);
+        });
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed SelectMangaCharacters");
+            resolve(characters);
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Select all comments about an anime with that uuid - - - - - - - - - - - 
+async function selectAnimeComments(animeUuid, page, type) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        let proc;
+        if (type == 'Manga')
+            proc = 'SelectMangaComments';
+        else proc = 'SelectAnimeComments';
+
         let offset = (page - 1) * 8;
-        const dbrequest = new Request('SelectAnimeComments', (err, rowCount) => {
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed SelectAnimeComments");
                 console.log("err SelectAnimeComments : ", err);
@@ -1060,7 +1122,7 @@ async function selectAnimeComments(animeUuid, page) {
         });
 
         dbrequest.on('requestCompleted', () => {
-            console.log("Request completed SelectAnimeCharacters");
+            console.log("Request completed SelectAnimeComments");
             resolve(comments);
         });
 
@@ -1071,12 +1133,18 @@ async function selectAnimeComments(animeUuid, page) {
 
 
 // - - - - - - - - - - Select animes from each genre (that has at least 3) - - - - - - - - - - - 
-async function selectAnimesFromEachGenre() {
+async function selectAnimesFromEachGenre(type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
-        const dbrequest = new Request('SelectAnimesFromEachGenre', (err, rowCount) => {
+        let proc;
+        if (type == 'Anime')
+            proc = 'SelectAnimesFromEachGenre';
+        else
+            proc = 'SelectMangasFromEachGenre';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed SelectAnimesFromEachGenre");
                 console.log("err SelectAnimesFromEachGenre : ", err);
@@ -1100,6 +1168,7 @@ async function selectAnimesFromEachGenre() {
     });
     return prom;
 }
+
 
 // - - - - - - - - - - Select all genres - - - - - - - - - - - 
 async function selectAllGenres() {
@@ -1133,12 +1202,17 @@ async function selectAllGenres() {
 }
 
 // - - - - - - - - - - Select top 12 animes  - - - - - - - - - - - 
-async function selectTopAnimes() {
+async function selectTopAnimes(type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
-        const dbrequest = new Request('SelectTopAnimes', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'SelectTopMangas';
+        else proc = 'SelectTopAnimes';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed SelectTopAnimes");
                 console.log("err SelectTopAnimes : ", err);
@@ -1164,12 +1238,17 @@ async function selectTopAnimes() {
 }
 
 // - - - - - - - - - - Select 6 most recent animes  - - - - - - - - - - - 
-async function selectRecentAnimes() {
+async function selectRecentAnimes(type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
-        const dbrequest = new Request('SelectRecentAnimes', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'SelectRecentMangas';
+        else proc = 'SelectRecentAnimes';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed SelectRecentAnimes");
                 console.log("err SelectRecentAnimes : ", err);
@@ -1230,12 +1309,17 @@ async function selectRecentComments() {
 }
 
 // - - - - - - - - - - Select all animes from a genre - - - - - - - - - - - 
-async function selectAllAnimesFromGenre(genreName) {
+async function selectAllAnimesFromGenre(genreName, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
-        const dbrequest = new Request('SelectAllAnimesFromGenre', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'SelectAllMangasFromGenre';
+        else proc = 'SelectAllAnimesFromGenre';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed SelectAllAnimesFromGenre");
                 console.log("err SelectAllAnimesFromGenre : ", err);
@@ -1270,6 +1354,9 @@ async function registerNewAnimeAdmin(title, author, description, avatar, numberO
 
         let synopsis = 'N/A';
         let trailer_video = TYPES.Null;
+
+        if (!avatar || avatar == '')
+            avatar = '';
 
         if (!author || author == '')
             author = TYPES.Null;
@@ -1308,13 +1395,17 @@ async function registerNewAnimeAdmin(title, author, description, avatar, numberO
 }
 
 // - - - - - - - - - - Add a new genre to an anime - - - - - - - - - - - 
-async function addGenreToAnime(genre, animeUuid) {
+async function addGenreToAnime(genre, animeUuid, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
+        let proc;
+        if (type == 'Manga')
+            proc = 'AddNewGenreManga';
+        else proc = 'AddNewGenreAnime';
 
-        const dbrequest = new Request('AddNewGenreAnime', (err, rowCount) => {
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed AddNewGenreAnime admin");
                 console.log("err AddNewGenreAnime admin : ", err);
@@ -1358,6 +1449,32 @@ async function addCharacterToAnime(characterUuid, voiceActorUuid, animeUuid) {
 
         dbrequest.on('requestCompleted', () => {
             console.log("Request completed AddNewCharacterAnime admin");
+            resolve('success');
+        });
+
+        connection.callProcedure(dbrequest);
+    });
+    return prom;
+}
+
+// - - - - - - - - - - Add a new genre to an manga - - - - - - - - - - - 
+async function addCharacterToManga(characterUuid, animeUuid) {
+    const prom = new Promise(async (resolve, reject) => {
+        const TYPES = require('tedious').TYPES;
+        let Request = require('tedious').Request;
+
+        const dbrequest = new Request('AddNewCharacterManga', (err, rowCount) => {
+            if (err) {
+                reject("failed AddNewCharacterManga admin");
+                console.log("err AddNewCharacterManga admin : ", err);
+            }
+        });
+
+        dbrequest.addParameter('characterUuid', TYPES.UniqueIdentifier, characterUuid);
+        dbrequest.addParameter('animeUuid', TYPES.UniqueIdentifier, animeUuid);
+
+        dbrequest.on('requestCompleted', () => {
+            console.log("Request completed AddNewCharacterManga admin");
             resolve('success');
         });
 
@@ -1744,6 +1861,9 @@ async function registerNewMangaAdmin(title, author, description, avatar, numberO
 
         let synopsis = 'N/A';
 
+        if (!avatar || avatar == '')
+            avatar = '';
+
         if (!author || author == '')
             author = TYPES.Null;
 
@@ -1764,10 +1884,14 @@ async function registerNewMangaAdmin(title, author, description, avatar, numberO
         dbrequest.addParameter('manga_image', TYPES.NVarChar, avatar);
         dbrequest.addParameter('number_of_chapters', TYPES.Int, numberOfChapters);
 
+        let animeUuid;
+        dbrequest.on('row', (columns) => {
+            animeUuid = columns[0].value;
+        });
 
         dbrequest.on('requestCompleted', () => {
             console.log("Request completed AddNewManga admin");
-            resolve("success");
+            resolve(animeUuid);
         });
 
         connection.callProcedure(dbrequest);
@@ -1853,14 +1977,20 @@ async function deleteMangaAdmin(mangaUuid) {
 
 
 // - - - - - - - - - - Add a new watchlist anime entry  - - - - - - - - - - - 
-async function addNewWatchlistAnime(user, animeTitle, myStatus, myRating) {
+async function addNewWatchlistAnime(user, animeTitle, myStatus, myRating, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
         if (!myRating || myRating == '')
             myRating = TYPES.Null;
 
-        const dbrequest = new Request('AddNewWatchlistAnime', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'AddNewWatchlistManga';
+        else
+            proc = 'AddNewWatchlistAnime';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed AddNewWatchlistAnime admin");
                 console.log("err AddNewWatchlistAnime admin : ", err);
@@ -1885,7 +2015,7 @@ async function addNewWatchlistAnime(user, animeTitle, myStatus, myRating) {
 }
 
 // - - - - - - - - - - Edit a watchlist anime entry  - - - - - - - - - - - 
-async function updateWatchlistAnime(watchlistAnimeUuid, myStatus, myRating) {
+async function updateWatchlistAnime(watchlistAnimeUuid, myStatus, myRating, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
@@ -1894,7 +2024,12 @@ async function updateWatchlistAnime(watchlistAnimeUuid, myStatus, myRating) {
         if (!myStatus || myStatus == '')
             myStatus = TYPES.Null;
 
-        const dbrequest = new Request('UpdateWatchlistAnime', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'UpdateWatchlistManga';
+        else
+            proc = 'UpdateWatchlistAnime';
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed UpdateWatchlistAnime admin");
                 console.log("err UpdateWatchlistAnime admin : ", err);
@@ -1914,12 +2049,18 @@ async function updateWatchlistAnime(watchlistAnimeUuid, myStatus, myRating) {
 }
 
 // - - - - - - - - - - Delete a watchlist anime entry - - - - - - - - - - - 
-async function deleteWatchlistAnime(watchlistAnimeUuid) {
+async function deleteWatchlistAnime(watchlistAnimeUuid, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
-        const dbrequest = new Request('DeleteWatchlistAnime', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'DeleteWatchlistManga';
+        else
+            proc = 'DeleteWatchlistAnime';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed DeleteWatchlistAnime");
                 console.log("err DeleteWatchlistAnime : ", err);
@@ -1939,12 +2080,18 @@ async function deleteWatchlistAnime(watchlistAnimeUuid) {
 }
 
 // - - - - - - - - - - Add a new comment to an anime  - - - - - - - - - - - 
-async function addNewCommentAnime(user, animeTitle, myComment) {
+async function addNewCommentAnime(user, animeTitle, myComment, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
-        const dbrequest = new Request('AddNewCommentAnime', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'AddNewCommentManga';
+        else
+            proc = 'AddNewCommentAnime';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed AddNewCommentAnime");
                 console.log("err AddNewCommentAnime : ", err);
@@ -1966,12 +2113,18 @@ async function addNewCommentAnime(user, animeTitle, myComment) {
 
 
 // - - - - - - - - - - Delete a comment (of an anime) - - - - - - - - - - - 
-async function deleteCommentAnime(comUuid) {
+async function deleteCommentAnime(comUuid, type) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
 
-        const dbrequest = new Request('DeleteCommentAnime', (err, rowCount) => {
+        let proc;
+        if (type == 'Manga')
+            proc = 'DeleteCommentManga';
+        else
+            proc = 'DeleteCommentAnime';
+
+        const dbrequest = new Request(proc, (err, rowCount) => {
             if (err) {
                 reject("failed deleteCommentAnime");
                 console.log("err deleteCommentAnime : ", err);
@@ -2068,6 +2221,8 @@ module.exports = {
     registerNewMangaAdmin: registerNewMangaAdmin,
     updateMangaAdmin: updateMangaAdmin,
 
+    selectMangaCharacters: selectMangaCharacters,
+    addCharacterToManga: addCharacterToManga,
     // Watchlist Anime :
     selectUserAnimeWatchlist: selectUserAnimeWatchlist,
     addNewWatchlistAnime: addNewWatchlistAnime,

@@ -1,5 +1,9 @@
 console.log('Hello Anime Page');
 
+let type = document.querySelector('.top-level-container').dataset.type;
+
+console.log('type : ', type);
+
 let animeTitle = document.querySelector('.top-level-container').dataset.animetitle;
 //console.log(animeTitle);
 
@@ -25,7 +29,7 @@ function addToWatchlistAction() {
     animeLeftDiv.appendChild(addToWatchlistDiv);
 
     addToWatchlistDiv.innerHTML = `<div class="addToWatchlist">
-    <form action="/anime/addToWatchlist/${animeTitle}" class='form-div' method="POST">
+    <form action="/${type}/addToWatchlist/${animeTitle}" class='form-div' method="POST">
         <div class="mt-3">
             <label class="form-label" for="status">Status</label>
             <select class="form-select select-status" onChange="selectedStatusChanged()" name="status">
@@ -119,7 +123,7 @@ function removeFromWatchlistAnimeAction(watchlistAnimeUuid) {
     xhttp.onload = function () {
         location.reload();
     }
-    xhttp.open("DELETE", `http://localhost:3000/anime/delete-watchlist-anime/${watchlistAnimeUuid}/${animeTitle}`);
+    xhttp.open("DELETE", `http://localhost:3000/${type}/delete-watchlist-${type}/${watchlistAnimeUuid}/${animeTitle}`);
     xhttp.send();
 }
 function showAddCommentForm() {
@@ -132,7 +136,7 @@ function showAddCommentForm() {
         <h3>Add new comment</h3>
         <hr/>
       </div>
-      <form action="/anime/add-new-comment/${animeTitle}" method="POST">
+      <form action="/${type}/add-new-comment/${animeTitle}" method="POST">
         <div class="mb-3">
         </div>
         <div class="mb-3">
@@ -156,7 +160,7 @@ function deleteComment(comUuid) {
         const commentDiv = document.getElementById(comUuid);
         commentDiv.remove();
     }
-    xhttp.open("DELETE", `http://localhost:3000/anime/delete-comment/${comUuid}/${animeTitle}`);
+    xhttp.open("DELETE", `http://localhost:3000/${type}/delete-comment/${comUuid}/${animeTitle}`);
     xhttp.send();
 }
 
@@ -173,7 +177,7 @@ function editFromWatchlistAnimeAction(watchlistAnimeUuid) {
     animeLeftDiv.appendChild(editFromWatchlistDiv);
 
     editFromWatchlistDiv.innerHTML = `<div class="editFromWatchlist">
-    <form action="/anime/editFromWatchlistAnime/${watchlistAnimeUuid}/${animeTitle}" class='form-div' method="POST">
+    <form action="/${type}/editFromWatchlist${type}/${watchlistAnimeUuid}/${animeTitle}" class='form-div' method="POST">
         <div class="mt-3">
             <label class="form-label" for="status">Status</label>
             <select class="form-select select-status" onChange="selectedStatusChanged()" name="status">

@@ -150,6 +150,29 @@ mixin mixinAddEditUser(action, type)
                 .mb-3
                     label.form-label(for="numberOfChapters") Number of chapters
                     input#username.form-control.border.rounded.border-1(type="text" placeholder="Enter number of chapters" name="numberOfChapters")
+                .mb-3
+                    label.form-label(for="genres") Add Genres
+                    .row.anime-genres-div
+                        .col-10
+                            input.mt-1.form-control.border.rounded.border-1(list='dataListOptions' id='input_0' placeholder="Enter genre" name="genres")
+                            datalist#dataListOptions
+                                option(value = 'Action')
+                                option(value = 'Adventure')
+                                option(value = 'Fantasy')
+                                option(value = 'Drama')
+                        .col-2
+                            button.w-100.mt-1.rounded.btn.btn-primary(type='button' id='add_button_0' onclick='addGenreAnime(0)') Add
+                .mb-3
+                    label.form-label(for="characters") Add Characters
+                    label.form-label(for="va") &nbsp (Voice Actors)
+                    .row.anime-characters-div
+                        .col-5
+                            input.mt-1.form-control.border.rounded.border-1(type="text" id='input_character_0' placeholder="Enter character UUID" name="characters")
+                        .col-5
+                            input.mt-1.form-control.border.rounded.border-1(type="text" id='input_va_0' placeholder="Enter voice actor UUID" name="va")
+                        .col-2
+                            button.w-100.mt-1.rounded.btn.btn-primary(type='button' id='add_button_char_0' onclick='addCharacterAnime(0)') Add
+                .mb-5
             // End if type == 'Manga'
 
             button.btn.btn-primary(type='submit') Submit

@@ -385,7 +385,7 @@ router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
         }
         */
 
-        let [title, author, description, imgPathRaw, numberOfEpisodes] = [req.body.title, req.body.author, req.body.description, req.file.path, req.body.numberOfEpisodes];
+        let [title, author, description, imgPathRaw, numberOfEpisodes] = [req.body.title, req.body.author, req.body.description, req.file, req.body.numberOfEpisodes];
         let avatar = null;
         if (imgPathRaw && imgPathRaw != '') {
             imgPathRaw = imgPathRaw.path;
@@ -393,7 +393,7 @@ router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
         }
         console.log('avatar : ', avatar);
 
-        if (title && avatar && numberOfEpisodes && !isNaN(numberOfEpisodes)) {
+        if (title && numberOfEpisodes && !isNaN(numberOfEpisodes)) {
             try {
                 let animeUuid = await db.registerNewAnimeAdmin(title, author, description, avatar, numberOfEpisodes);
 
@@ -438,13 +438,60 @@ router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
     }
 
     if (uuid == 'Manga') {
-        const [title, author, description, imgPathRaw, numberOfChapters] = [req.body.title, req.body.author, req.body.description, req.file.path, req.body.numberOfChapters];
-        const avatar = path.normalize(imgPathRaw.replace('public', '.'));
-        console.log(avatar);
+        let genres = [], characters = [];
 
-        if (title && avatar && numberOfChapters && !isNaN(numberOfChapters)) {
+        if (typeof req.body.genres == 'string' && req.body.genres && req.body.genres != '') {
+            genres[0] = req.body.genres;
+        }
+        if (typeof req.body.characters == 'string' && req.body.characters && req.body.characters != '') {
+            characters[0] = req.body.characters;
+        }
+
+        for (let index = 0; index < 10; index++) {
+            if (req.body.genres[index] && req.body.genres[index] != '' && typeof req.body.genres != 'string')
+                genres.push(req.body.genres[index]);
+            else break;
+        }
+        for (let index = 0; index < 15; index++) {
+            if (typeof req.body.characters != 'string' && req.body.characters[index] && req.body.characters[index] != '') {
+                characters.push(req.body.characters[index]);
+            }
+            else break;
+        }
+        let [title, author, description, imgPathRaw, numberOfChapters] = [req.body.title, req.body.author, req.body.description, req.file, req.body.numberOfChapters];
+        let avatar = null;
+        if (imgPathRaw && imgPathRaw != '') {
+            imgPathRaw = imgPathRaw.path;
+            avatar = path.normalize(imgPathRaw.replace('public', '.'));
+        }
+
+        if (title && numberOfChapters && !isNaN(numberOfChapters)) {
             try {
-                await db.registerNewMangaAdmin(title, author, description, avatar, numberOfChapters);
+                //console.log(title, author, description, avatar, numberOfChapters);
+                let animeUuid = await db.registerNewMangaAdmin(title, author, description, avatar, numberOfChapters);
+
+                if (animeUuid && animeUuid != '' && genres.length > 0) {
+                    for (let genre of genres) {
+                        try {
+                            await db.addGenreToAnime(genre, animeUuid, 'Manga');
+                        }
+                        catch {
+                            console.log(`couldnt add genre ${genre} to manga ${title}`);
+                        }
+                    }
+                }
+
+                if (animeUuid && animeUuid != '' && characters.length > 0) {
+                    for (let i = 0; i < characters.length; i++) {
+                        try {
+                            await db.addCharacterToManga(characters[i], animeUuid);
+                        }
+                        catch (err) {
+                            console.error('err add char', err);
+                        }
+                    }
+                }
+
                 res.status(200);
                 res.redirect(`/admin/action/add/${uuid}`);
             }

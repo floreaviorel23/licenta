@@ -5,12 +5,12 @@ include ./include/mixinComment.pug
 
 doctype html
 html(lang="en")
-    +head("Anime Page")
+    +head(`${type} Page`)
     link(rel="stylesheet" href="./css/animePage.css")
     body 
         +navbar(userName, userRole, userAvatar)
 
-        .container.mt-5.top-level-container(data-animeTitle = `${anime.title}`)
+        .container.mt-5.top-level-container(data-animeTitle = `${anime.title}` data-type=`${type}`)
             .row.mb-5.pb-3
                 .col-3.animeLeftDiv
                     .animeCard.rounded
@@ -76,7 +76,7 @@ html(lang="en")
                                 .genresDiv.d-flex.justify-content-start.gap-3 
                                     p Genres :
                                     each genre in anime.genres
-                                        a.link-primary(href=`/anime/genre/${genre}`) #{genre}
+                                        a.link-primary(href=`/${type}/genre/${genre}`) #{genre}
 
 
             .row.mt-1

@@ -33,18 +33,18 @@ html(lang="en")
                                             .container
                                                 .d-flex.cards-container
                                                     -for(let i=0; i<4; i++)
-                                                        +mixinAnimeCard(topAnimes[i])
+                                                        +mixinAnimeCard(topAnimes[i], 'Anime')
 
                                         .item
                                             .container
                                                 .d-flex.cards-container
                                                     -for(let i=4; i<8; i++)
-                                                        +mixinAnimeCard(topAnimes[i])
+                                                        +mixinAnimeCard(topAnimes[i], 'Anime')
                                         .item
                                             .container
                                                 .d-flex.cards-container
                                                     -for(let i=8; i<12; i++)
-                                                        +mixinAnimeCard(topAnimes[i])
+                                                        +mixinAnimeCard(topAnimes[i], 'Anime')
 
                                     // Left and right controls
                                     a.left.carousel-control.rounded-2(href='#myAnimeCarousel' data-slide='prev')
@@ -82,24 +82,18 @@ html(lang="en")
                                         .item.active
                                             .container
                                                 .d-flex.cards-container
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
+                                                    -for(let i=0; i<4; i++)
+                                                        +mixinAnimeCard(topMangas[i], 'Manga')
                                         .item
                                             .container
                                                 .d-flex.cards-container
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
+                                                    -for(let i=4; i<8; i++)
+                                                        +mixinAnimeCard(topMangas[i], 'Manga')
                                         .item
                                             .container
                                                 .d-flex.cards-container
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
-                                                    +mixinAnimeCard(anime)
+                                                    -for(let i=8; i<12; i++)
+                                                        +mixinAnimeCard(topMangas[i], 'Manga')
 
                                     // Left and right controls
                                     a.left.carousel-control.rounded-2(href='#myMangaCarousel' data-slide='prev')
@@ -128,8 +122,7 @@ html(lang="en")
                                 h4 Recently added anime
                                 .recently-added.d-flex.justify-content-evenly
                                     each anime in recentAnimes
-                                        -anime.imgPath = './images/Naruto.jpg';
-                                        +mixinAnimeCard(anime)
+                                        +mixinAnimeCard(anime, 'Anime')
 
 
                     .row
@@ -137,12 +130,8 @@ html(lang="en")
                             .container-fluid.mt-5
                                 h4 Recently added manga
                                 .recently-added.d-flex.justify-content-evenly
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
-                                    +mixinAnimeCard(anime)
+                                    each anime in recentMangas
+                                        +mixinAnimeCard(anime, 'Manga')
                 // - - - - - - - - - - Sidebar - - - - - - - - - - - - - - -
                 .col-4
                     // Statistics

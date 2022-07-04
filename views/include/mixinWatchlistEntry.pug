@@ -1,4 +1,4 @@
-mixin mixinWatchlistEntry(entry)
+mixin mixinWatchlistEntry(entry, type)
 
     //- let bgColor;
     //- if(entry.status === 'Completed') bgColor = 'lightgreen'
@@ -8,10 +8,13 @@ mixin mixinWatchlistEntry(entry)
             p(style="font-weight: bold") #{entry.number}.
 
         .col-2.d-flex.align-items-center
-            img.img-watchlist(src=`${entry.imgSrc}` alt='Card image')
+            -if(entry.imgSrc && entry.imgSrc!='')
+                img.img-watchlist(src=`${entry.imgSrc}` alt='Card image')
+            -else
+                img.img-watchlist(src=`./images/login-bg.jpg` alt='Card image')
 
         .col-4.d-flex.align-items-center 
-            a(href=`/anime/${entry.title}/page/1`) 
+            a(href=`/${type}/${entry.title}/page/1`) 
                 p(style="font-weight: bold") #{entry.title}
 
         .col-1.d-flex.align-items-center

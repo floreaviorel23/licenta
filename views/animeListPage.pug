@@ -5,7 +5,7 @@ include ./include/mixinWatchlistEntry.pug
 
 doctype html
 html(lang="en")
-    +head("Anime List Page")
+    +head(`${type} List Page`)
     link(rel="stylesheet" href="./css/animeListPage.css")
     body 
         +navbar(userName, userRole, userAvatar)
@@ -47,8 +47,7 @@ html(lang="en")
 
             -for(let i=0; i<rows.length; i++)
                 -rows[i].number = i+1;
-                -rows[i].imgSrc = './images/Naruto.jpg';
-                +mixinWatchlistEntry(rows[i])
+                +mixinWatchlistEntry(rows[i], type)
 
 
 

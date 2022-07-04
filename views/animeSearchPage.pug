@@ -15,81 +15,82 @@ html(lang="en")
             .row
                 .col-1
                 .col-10
-                    .input-group.anime-search-bar
-                        input.form-control.ps-5(type='text' placeholder=`Search ${type.toLowerCase()}` aria-label="Search" aria-describedby='button-addon2')
-                        button.px-3(type="button" class="" aria-label="Close")
-                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="4em" height="1.5em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><path fill="currentColor" d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0a5.5 5.5 0 0 1 11 0z"/></svg>
+                    form(action=`${type}/search-${type}` method="POST")
+                        .input-group.anime-search-bar
+                            input.form-control.ps-5(type='text' placeholder=`Search ${type.toLowerCase()}` name='animeTitle' aria-label="Search" aria-describedby='button-addon2')
+                            button.px-3(type="submit" class="" aria-label="Close")
+                                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="4em" height="1.5em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"><path fill="currentColor" d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0a5.5 5.5 0 0 1 11 0z"/></svg>
                 .col-5
 
 
             .row.my-5.pt-3
                 .col-6 
                     .container-fluid 
-                        a(href=`/anime/genre/action`)
+                        a(href=`${type}/genre/action`)
                             h4 Action
                         .row.pt-3
                             each anime in actionAnime
                                 .col-4
                                     -anime.imgPath = './images/Naruto.jpg';
                                     -anime.genres = ['', '', ''];
-                                    +mixinAnimeCard(anime)
+                                    +mixinAnimeCard(anime, type)
 
                 .col-6
                     .container-fluid 
-                        a(href=`/anime/genre/comedy`)
+                        a(href=`${type}/genre/comedy`)
                             h4 Comedy
                         .row.pt-3
                             each anime in comedyAnime
                                 .col-4
                                     -anime.imgPath = './images/Naruto.jpg';
                                     -anime.genres = ['', '', ''];
-                                    +mixinAnimeCard(anime)
+                                    +mixinAnimeCard(anime, type)
 
             .row.my-5.pt-3
                 .col-6 
                     .container-fluid 
-                        a(href=`/anime/genre/adventure`)
+                        a(href=`${type}/genre/adventure`)
                             h4 Adventure
                         .row.pt-3
                             each anime in adventureAnime
                                 .col-4
                                     -anime.imgPath = './images/Naruto.jpg';
                                     -anime.genres = ['', '', ''];
-                                    +mixinAnimeCard(anime)
+                                    +mixinAnimeCard(anime, type)
 
                 .col-6
                     .container-fluid 
-                        a(href=`/anime/genre/fantasy`)
+                        a(href=`${type}/genre/fantasy`)
                             h4 Fantasy
                         .row.pt-3
                             each anime in fantasyAnime
                                 .col-4
                                     -anime.imgPath = './images/Naruto.jpg';
                                     -anime.genres = ['', '', ''];
-                                    +mixinAnimeCard(anime)
+                                    +mixinAnimeCard(anime, type)
 
             .row.my-5.pt-3
                 .col-6 
                     .container-fluid 
-                        a(href=`/anime/genre/drama`)
+                        a(href=`${type}/genre/drama`)
                             h4 Drama
                         .row.pt-3
                             each anime in dramaAnime
                                 .col-4
                                     -anime.imgPath = './images/Naruto.jpg';
                                     -anime.genres = ['', '', ''];
-                                    +mixinAnimeCard(anime)
+                                    +mixinAnimeCard(anime, type)
 
                 .col-6
                     .container-fluid 
-                        a(href=`/anime/genre/romance`)
+                        a(href=`${type}/genre/romance`)
                             h4 Romance
                         .row.pt-3
                             each anime in romanceAnime
                                 .col-4
                                     -anime.imgPath = './images/Naruto.jpg';
                                     -anime.genres = ['', '', ''];
-                                    +mixinAnimeCard(anime)
+                                    +mixinAnimeCard(anime, type)
             .row.mt-5.pt-3.mb-3
                 .col-12
                     .container-fluid
@@ -100,7 +101,7 @@ html(lang="en")
                         .row
                             each genre in genres
                                 .col-3
-                                    a(href=`/anime/genre/${genre}`) 
+                                    a(href=`${type}/genre/${genre}`) 
                                         p #{genre}
                             
 

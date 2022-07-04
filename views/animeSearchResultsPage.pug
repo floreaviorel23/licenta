@@ -5,20 +5,19 @@ include ./include/mixinGenreDiv.pug
 
 doctype html
 html(lang="en")
-    +head("Genre Page")
+    +head("Search Results Page")
     link(rel="stylesheet" href="./css/genrePage.css")
 
     body
         +navbar(userName, userRole, userAvatar)
 
-        - genre = genre.charAt(0).toUpperCase() + genre.slice(1)
         .container.mt-3.p-5
             .row
                 .col-12.title
-                    h1 #{genre} #{type}
+                    h1 "#{animeTitle}" search results
 
 
             .row
-                each anime in animes
-                    -anime.image = anime.animeImagePath
+                each anime in animes 
+                    -anime.animeTitle = anime.title
                     +mixinGenreDiv(anime)

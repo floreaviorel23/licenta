@@ -22,7 +22,10 @@
 }
 
 .img-watchlist {
-    height: 120px;
+    height: 140px;
+    width: 97px;
+    object-fit: cover;
+    border-radius: 2px;
 }
 
 
