@@ -1592,10 +1592,13 @@ async function deleteAnimeAdmin(animeUuid) {
 
 
 // - - - - - - - - - - Select all info about all mangas with that name - - - - - - - - - - - 
-async function selectMangaAdmin(manga) {
+async function selectMangaAdmin(manga, user) {
     const prom = new Promise(async (resolve, reject) => {
         const TYPES = require('tedious').TYPES;
         let Request = require('tedious').Request;
+
+        if (!user || user == '')
+            user = TYPES.Null;
 
         const dbrequest = new Request('ReadManga', (err, rowCount) => {
             if (err) {
@@ -1605,6 +1608,7 @@ async function selectMangaAdmin(manga) {
         });
 
         dbrequest.addParameter('title', TYPES.NVarChar, manga);
+        dbrequest.addParameter('username', TYPES.NVarChar, user);
 
         let people = [];
         let myPerson = {};

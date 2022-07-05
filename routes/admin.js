@@ -325,7 +325,7 @@ router.post("/action/add/:uuid", upload.single("avatar"), async (req, res) => {
     }
 
     if (uuid == 'Character') {
-        let [name, imgPathRaw, type] = [req.body.name, req.file.path, req.body.type];
+        let [name, imgPathRaw, type] = [req.body.name, req.file, req.body.type];
         let avatar = '';
         if (imgPathRaw && imgPathRaw != '') {
             imgPathRaw = imgPathRaw.path;
@@ -636,9 +636,9 @@ router.post("/action/edit/:uuid", upload.single("avatar"), async (req, res) => {
             }
             else break;
         }
-        console.log('genres : ', genres);
-        console.log('characters : ', characters);
-        console.log('vas : ', vas);
+        //console.log('genres : ', genres);
+        //console.log('characters : ', characters);
+        //console.log('vas : ', vas);
         let [animeUuid, title, author, description, imgPathRaw, numberOfEpisodes] = [req.body.animeUuid, req.body.title, req.body.author, req.body.description, req.file, req.body.numberOfEpisodes];
         let avatar = null;
         if (imgPathRaw && imgPathRaw != '') {
@@ -653,7 +653,7 @@ router.post("/action/edit/:uuid", upload.single("avatar"), async (req, res) => {
         }
         if (animeUuid) {
             try {
-                if (title || author || description || avatar || numberOfEpisodes) {
+                if (title || author || description || avatar || (numberOfEpisodes && !isNaN(numberOfEpisodes))) {
                     await db.updateAnimeAdmin(animeUuid, title, author, description, avatar, numberOfEpisodes);
                 }
                 if (animeUuid && animeUuid != '' && genres.length > 0) {

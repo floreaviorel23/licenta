@@ -63,12 +63,11 @@ html(lang="en")
                                 h1 #{genre} #{type}
 
                         - const anime = {};
-                        - anime.imgPath = './images/Naruto.jpg';
                         - anime.title = 'Naruto';
 
                         .row
                             each fav in favoriteAnimes
-                                -fav.imgPath = './images/Naruto.jpg';
+                                -fav.image = fav.animeImagePath;
                                 +mixinFavDiv(fav)
 
                 .col-6
@@ -80,7 +79,7 @@ html(lang="en")
 
                         .row
                             each fav in favoriteMangas
-                                -fav.imgPath = './images/Naruto.jpg';
+                                -fav.image = fav.animeImagePath;
                                 +mixinFavDiv(fav)
 
             .row.mt-5.px-3.pt-4
