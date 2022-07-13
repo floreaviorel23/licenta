@@ -542,7 +542,7 @@ router.post("/action/edit/:uuid", upload.single("avatar"), async (req, res) => {
             }
             if (role) {
                 try {
-                    console.log('role : ', role);
+                    //console.log('role : ', role);
                     await db.updateUserRole(username, role);
                 }
                 catch (err) {

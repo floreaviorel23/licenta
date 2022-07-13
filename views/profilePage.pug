@@ -68,7 +68,7 @@ html(lang="en")
                         .row
                             each fav in favoriteAnimes
                                 -fav.image = fav.animeImagePath;
-                                +mixinFavDiv(fav)
+                                +mixinFavDiv(fav, 'Anime')
 
                 .col-6
                     h2 Favorite mangas
@@ -80,7 +80,7 @@ html(lang="en")
                         .row
                             each fav in favoriteMangas
                                 -fav.image = fav.animeImagePath;
-                                +mixinFavDiv(fav)
+                                +mixinFavDiv(fav, 'Manga')
 
             .row.mt-5.px-3.pt-4
                 h2.mb-1 List of friends
